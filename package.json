@@ -20,7 +20,10 @@
     "@shared": "src/shared"
   },
   "dependencies": {
-    "module-alias": "*"
+    "module-alias": "*",
+    "react": "^16.6.3",
+    "react-dom": "^16.6.3",
+    "react-hot-loader": "^4.3.12"
   },
   "devDependencies": {
     "eslint": "^4.9.0",

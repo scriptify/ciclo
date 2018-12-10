@@ -1,0 +1,33 @@
+body,
+html {
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Raleway', sans-serif;
+    background: white;
+    text-align: center;
+}
+
+.recorder {
+    border: none;
+    height: 100px;
+    width: 100px;
+    border-radius: 50%;
+    background: rgb(192, 0, 0);
+    transition: 0.3s background;
+    margin-top: 20px;
+}
+
+.isRecording {
+    background: rgb(0, 115, 192);
+}
+
+.showMeasureEnd {
+    width: 100px;
+    height: 30px;
+    background: #000;
+}

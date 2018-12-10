@@ -1,3 +1,10 @@
-window.addEventListener('load', () => {
-  document.querySelector('#app').innerHTML = '<h1>Welcome to Crana (VanillaJS)</h1>';
-});
+import React from 'react';
+import ReactDOM from 'react-dom';
+
+import App from './components/App';
+
+ReactDOM.render(
+  (
+    <App />
+  ), document.getElementById('app'),
+);
