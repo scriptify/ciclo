@@ -188,7 +188,20 @@ export default class Loopstation extends EventEmitter {
     }); */
   }
 
-  async stopRecording({ numMeasures = 1 } = {}) {
+  stopRecording(params) {
+    if (this.bpm === null)
+      return this.stopRecordingImmediate(params);
+
+    return new Promise((resolve) => {
+      this.onMeasureStart = async () => {
+        this.onMeasureStart = () => {};
+        await this.stopRecordingImmediate(params);
+        resolve();
+      };
+    });
+  }
+
+  async stopRecordingImmediate({ numMeasures = 1 } = {}) {
     let newBuffer = await this.recorder.stop();
 
     const isFirstTrack = !this.measureDuration;
@@ -248,8 +261,17 @@ export default class Loopstation extends EventEmitter {
     /* const startOffset = this.audioCtx.currentTime +
       (this.measureDuration - this.currentMeasureOffset); */
 
-    console.log(this.currentMeasureOffset);
-    bufferNode.start(0, this.currentMeasureOffset);
+    const timeDiff = this.measureDuration - this.currentMeasureOffset;
+    let startOffset = this.currentMeasureOffset;
+    let startAt = 0;
+
+    if (timeDiff <= 0.1) {
+      startOffset = 0;
+      startAt = this.audioCtx.currentTime +
+        (this.measureDuration - this.currentMeasureOffset);
+    }
+
+    bufferNode.start(startAt, startOffset);
     this.emit('recordingstop');
   }
 }
