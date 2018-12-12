@@ -6,9 +6,7 @@ function audioDataToBuffer(audioCtx, data) {
     const fileReader = new FileReader();
     fileReader.addEventListener('loadend', async () => {
       const decodedData = await audioCtx.decodeAudioData(fileReader.result);
-      const bufferNode = audioCtx.createBufferSource();
-      bufferNode.buffer = decodedData;
-      resolve(bufferNode);
+      resolve(decodedData);
     });
     fileReader.readAsArrayBuffer(blob);
   });
@@ -23,7 +21,6 @@ class AudioBufferRecorder {
     volume: 1
   };
   data = [];
-  startedRecordingAt = 0;
 
   constructor(audioCtx) {
     this.audioCtx = audioCtx;
@@ -55,11 +52,10 @@ class AudioBufferRecorder {
   }
 }
 
-/* class BPMTimer extends EventEmitter {
-  // Sends notification on each measure
-
+class BPMTimer extends EventEmitter {
   measureLength = null;
   loop = null;
+  startedAt;
 
   constructor({ bpm, measure, audioCtx }) {
     super();
@@ -69,15 +65,22 @@ class AudioBufferRecorder {
   }
 
   setup() {
-    let lastEventSentAt = null;
+    this.startedAt = this.audioCtx.currentTime;
+    let lastMeasureStart = 0;
     this.loop = setInterval(() => {
-      const isMeasureEnd = lastEventSentAt
-        && this.audioCtx.currentTime >= (lastEventSentAt + this.measureLength)
-        && lastEventSentAt !== this.audioCtx.currentTime;
-      if (isMeasureEnd) {
-        lastEventSentAt = this.audioCtx.currentTime;
-        console.log('end');
-        this.emit('measureend');
+      const offset = (
+        (this.audioCtx.currentTime - this.startedAt)
+        % this.measureLength
+      ) / this.measureLength;
+      this.emit('progress', offset);
+
+      const currentMeasureNum = Math.floor(
+        (this.audioCtx.currentTime - this.startedAt) / this.measureLength
+      );
+      const isMeasureStart = currentMeasureNum > lastMeasureStart;
+      if (isMeasureStart) {
+        lastMeasureStart = currentMeasureNum;
+        this.emit('measurestart');
       }
     }, 1000 / 60);
   }
@@ -86,7 +89,7 @@ class AudioBufferRecorder {
     if (this.loop !== null && this.loop !== undefined)
       clearInterval(this.loop);
   }
-} */
+}
 
 function prepareAudioBuffer(audioBuffer) {
   for (let channel = 0; channel < audioBuffer.numberOfChannels; channel += 1) {
@@ -100,11 +103,44 @@ function prepareAudioBuffer(audioBuffer) {
   }
 }
 
-function getPlaybackRate(firstSampleLength, newSampleLength) {
+function getResizeFactor(firstSampleLength, newSampleLength) {
   return (
     (Math.ceil(newSampleLength / firstSampleLength) * firstSampleLength)
     / newSampleLength
-  ) ** -1;
+  );
+}
+
+function resizeAudioBuffer({
+  audioCtx,
+  audioBuffer,
+  newLength,
+  mode = 'after'
+}) {
+  if (audioBuffer.length === newLength)
+    return audioBuffer;
+
+  const newAudioBuffer = audioCtx.createBuffer(
+    audioBuffer.numberOfChannels, newLength, audioBuffer.sampleRate
+  );
+
+  const setOffset = (mode === 'after' || newLength < audioBuffer.sampleRate) ? 0 : newLength - audioBuffer.length;
+
+  for (let channel = 0; channel < newAudioBuffer.numberOfChannels; channel += 1)
+    newAudioBuffer.copyToChannel(audioBuffer.getChannelData(channel), channel, setOffset);
+
+  return newAudioBuffer;
+}
+
+function repeatBuffer({ audioBuffer, audioCtx, times }) {
+  const newBuffer = audioCtx.createBuffer(
+    audioBuffer.numberOfChannels, audioBuffer.length * times, audioBuffer.sampleRate
+  );
+
+  for (let currOffset = 0; currOffset < newBuffer.length; currOffset += audioBuffer.length) {
+    for (let channel = 0; channel < newBuffer.numberOfChannels; channel += 1)
+      newBuffer.copyToChannel(audioBuffer.getChannelData(channel), channel, currOffset);
+  }
+  return newBuffer;
 }
 
 export default class Loopstation extends EventEmitter {
@@ -113,6 +149,10 @@ export default class Loopstation extends EventEmitter {
   measureDuration = null;
   clock = null;
   firstTrackStartedAt = 0;
+  startedRecordingAt = 0;
+  onMeasureStart = () => {};
+
+  audioBuffers = [];
 
   constructor() {
     super();
@@ -120,46 +160,96 @@ export default class Loopstation extends EventEmitter {
     this.recorder = new AudioBufferRecorder(this.audioCtx);
   }
 
-  async startRecording() {
-    this.emit('recordingstart');
-    await this.recorder.start();
-  }
-
-  async stopRecording() {
-    const newBuffer = await this.recorder.stop();
-    newBuffer.loop = true;
-    newBuffer.connect(this.audioCtx.destination);
-
-    if (this.bpm === null) {
-      // First track
-      this.measureDuration = newBuffer.buffer.duration;
-      this.bpm = (Loopstation.MEASURE / this.measureDuration) * 60;
-      console.log({ bpm: this.bpm });
-      this.firstTrackStartedAt = this.audioCtx.currentTime;
-      /* this.clock = new BPMTimer({
-        bpm: this.bpm, measure: this.MEASURE, audioCtx: this.audioCtx
-      });
-      this.clock.addEventListener('measureend', () => this.emit('measureend')); */
-    }
-
-    const playbackRate = getPlaybackRate(this.measureDuration, newBuffer.buffer.duration);
-    const startOffset = (
+  get currentMeasureOffset() {
+    const offset = (
       (this.audioCtx.currentTime - this.firstTrackStartedAt)
       % this.measureDuration
     );
+    return offset;
+  }
 
-    console.log({
-      measure: this.measureDuration,
-      newDuration: newBuffer.buffer.duration * (playbackRate ** -1),
-      modulo: (newBuffer.buffer.duration * (playbackRate ** -1)) % this.measureDuration,
-      startOffset,
-      playbackRate
+  startRecording() {
+    const record = async () => {
+      this.emit('recordingstart');
+      await this.recorder.start();
+      this.recordingOffset = this.currentMeasureOffset - (this.measureDuration / 16);
+      if (this.recordingOffset < 0)
+        this.recordingOffset = 0;
+    };
+    return record();
+    /* if (this.bpm === null)
+      return record(); // First track
+    return new Promise((resolve) => {
+      this.onMeasureStart = async () => {
+        this.onMeasureStart = () => {};
+        await record();
+        resolve();
+      };
+    }); */
+  }
+
+  async stopRecording({ numMeasures = 1 } = {}) {
+    let newBuffer = await this.recorder.stop();
+
+    const isFirstTrack = !this.measureDuration;
+    if (isFirstTrack) {
+      // First track
+      this.measureDuration = newBuffer.duration * (numMeasures ** -1);
+      this.bpm = (Loopstation.MEASURE * 60) / this.measureDuration;
+      console.log({ bpm: this.bpm });
+      this.firstTrackStartedAt = this.audioCtx.currentTime;
+      this.clock = new BPMTimer({
+        bpm: this.bpm,
+        measure: Loopstation.MEASURE,
+        audioCtx: this.audioCtx
+      });
+      this.clock.addEventListener('progress', d => this.emit('progress', d));
+      this.clock.addEventListener('measurestart', () => this.onMeasureStart());
+
+      if (numMeasures !== 1) {
+        const REPEAT_TIMES = numMeasures ** -1;
+        newBuffer = repeatBuffer({
+          audioBuffer: newBuffer, audioCtx: this.audioCtx, times: REPEAT_TIMES
+        });
+      }
+    }
+
+    prepareAudioBuffer(newBuffer);
+
+    // First append empty samples in the beginning according to when the recording was started
+    const newSizeWithoutStartOffset = (this.recordingOffset + newBuffer.duration);
+    const newSizeFactor = newSizeWithoutStartOffset / newBuffer.duration;
+    const newSizeWithoutStartOffsetSamples = Math.floor(newBuffer.length * newSizeFactor);
+    newBuffer = isFirstTrack ? newBuffer : resizeAudioBuffer({
+      audioCtx: this.audioCtx,
+      audioBuffer: newBuffer,
+      newLength: newSizeWithoutStartOffsetSamples,
+      mode: 'before'
     });
 
+    const resizeFactor = getResizeFactor(this.measureDuration, newBuffer.duration);
 
-    newBuffer.playbackRate.value = playbackRate;
-    prepareAudioBuffer(newBuffer);
-    newBuffer.start(0, startOffset);
+    newBuffer = resizeAudioBuffer({
+      audioCtx: this.audioCtx,
+      audioBuffer: newBuffer,
+      newLength: Math.floor(newBuffer.length * resizeFactor)
+    });
+
+    const bufferNode = this.audioCtx.createBufferSource();
+    bufferNode.loop = true;
+    bufferNode.buffer = newBuffer;
+
+
+    bufferNode.connect(this.audioCtx.destination);
+
+    bufferNode.id = Math.random();
+    this.audioBuffers.push(bufferNode);
+
+    /* const startOffset = this.audioCtx.currentTime +
+      (this.measureDuration - this.currentMeasureOffset); */
+
+    console.log(this.currentMeasureOffset);
+    bufferNode.start(0, this.currentMeasureOffset);
     this.emit('recordingstop');
   }
 }

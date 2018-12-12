@@ -14,8 +14,8 @@ body {
 
 .recorder {
     border: none;
-    height: 100px;
-    width: 100px;
+    height: 200px;
+    width: 200px;
     border-radius: 50%;
     background: rgb(192, 0, 0);
     transition: 0.3s background;
@@ -26,8 +26,28 @@ body {
     background: rgb(0, 115, 192);
 }
 
-.showMeasureEnd {
-    width: 100px;
+.progressBar {
     height: 30px;
     background: #000;
+}
+
+.controls {
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+}
+
+.waitingForRecording {
+    background: rgba(2, 142, 235, 0.582);
+    animation: wait 0.5s alternate infinite;
+}
+
+@keyframes wait {
+    from {
+        border-radius: 50%;
+    }
+
+    to {
+        border-radius: 30%;
+    }
 }
