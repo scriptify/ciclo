@@ -1,18 +1,18 @@
-import EventEmitter from './util/EventEmitter';
+import EventEmitter from '../util/EventEmitter';
 
-interface BPMTimerConstructor {
+interface MeasureTimerConstructor {
   bpm: number;
   measure: number;
   audioCtx: AudioContext;
 }
 
-export default class BPMTimer extends EventEmitter {
+export default class MeasureTimer extends EventEmitter {
   private measureLength: number;
   private loop: number = -1;
   private startedAt: number = 0;
   private audioCtx: AudioContext;
 
-  constructor({ bpm, measure, audioCtx }: BPMTimerConstructor) {
+  constructor({ bpm, measure, audioCtx }: MeasureTimerConstructor) {
     super();
     this.audioCtx = audioCtx;
     this.measureLength = measure / (bpm / 60);

@@ -1,13 +1,20 @@
-import EventEmitter from './util/EventEmitter';
-import BPMTimer from './BPMTimer';
+import { v4 } from 'uuid';
+
+import EventEmitter from '../util/EventEmitter';
+import MeasureTimer from './MeasureTimer';
 import AudioBufferRecorder from './AudioBufferRecorder';
-import { repeatBuffer, prepareAudioBuffer, resizeAudioBuffer, getResizeFactor } from './util';
+import { repeatBuffer, prepareAudioBuffer, resizeAudioBuffer, getResizeFactor } from '../util';
 
 interface StopRecordingParams {
   numMeasures?: number;
 }
 
-export default class Loopstation extends EventEmitter {
+export interface LoopstationBuffer {
+  id: string;
+  buffer: AudioBufferSourceNode;
+}
+
+export default class AudioLooper extends EventEmitter {
   static MEASURE = 4;
 
   private audioCtx: AudioContext;
@@ -15,20 +22,19 @@ export default class Loopstation extends EventEmitter {
   private measureDuration: number = 0;
   private recordingOffset: number = 0;
   private bpm: number = 0;
-  private clock: BPMTimer | null = null;
-  private audioBuffers: AudioBufferSourceNode[] = [];
+  private clock: MeasureTimer | null = null;
+  private audioBuffers: LoopstationBuffer[] = [];
 
-  firstTrackStartedAt = 0;
-  startedRecordingAt = 0;
-  onMeasureStart = () => {};
+  private firstTrackStartedAt: number = 0;
+  private onMeasureStart = () => {};
 
-  constructor() {
+  constructor(audioCtx: AudioContext) {
     super();
-    this.audioCtx = new AudioContext();
+    this.audioCtx = audioCtx;
     this.recorder = new AudioBufferRecorder(this.audioCtx);
   }
 
-  get currentMeasureOffset() {
+  private get currentMeasureOffset() {
     const offset = (
       (this.audioCtx.currentTime - this.firstTrackStartedAt)
       % this.measureDuration
@@ -77,19 +83,19 @@ export default class Loopstation extends EventEmitter {
     });
   }
 
-  async stopRecordingImmediate({ numMeasures = 1 } = {}) {
+  private async stopRecordingImmediate({ numMeasures = 1 } = {}) {
     let newBuffer = await this.recorder.stop();
 
     const isFirstTrack = !this.measureDuration;
     if (isFirstTrack) {
       // First track
       this.measureDuration = newBuffer.duration * (numMeasures ** -1);
-      this.bpm = (Loopstation.MEASURE * 60) / this.measureDuration;
+      this.bpm = (AudioLooper.MEASURE * 60) / this.measureDuration;
       console.log({ bpm: this.bpm });
       this.firstTrackStartedAt = this.audioCtx.currentTime;
-      this.clock = new BPMTimer({
+      this.clock = new MeasureTimer({
         bpm: this.bpm,
-        measure: Loopstation.MEASURE,
+        measure: AudioLooper.MEASURE,
         audioCtx: this.audioCtx,
       });
       this.clock.addEventListener('progress', (d: number) => this.emit('progress', d));
@@ -132,8 +138,12 @@ export default class Loopstation extends EventEmitter {
 
     bufferNode.connect(this.audioCtx.destination);
 
-    // bufferNode.id = Math.random();
-    this.audioBuffers.push(bufferNode);
+    const newLoopstationBuffer = {
+      buffer: bufferNode,
+      id: v4(),
+    };
+
+    this.audioBuffers.push(newLoopstationBuffer);
 
     /* const startOffset = this.audioCtx.currentTime +
       (this.measureDuration - this.currentMeasureOffset); */
@@ -149,10 +159,6 @@ export default class Loopstation extends EventEmitter {
     }
 
     bufferNode.start(startAt, startOffset);
-    this.emit('recordingstop');
-  }
-
-  getAudioBuffers() {
-    return this.audioBuffers;
+    this.emit('recordingstop', newLoopstationBuffer);
   }
 }

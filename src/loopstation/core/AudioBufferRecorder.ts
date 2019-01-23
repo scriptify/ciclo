@@ -1,4 +1,4 @@
-import { audioDataToBuffer } from './util';
+import { audioDataToBuffer } from '../util';
 
 export default class AudioBufferRecorder {
   static CONSTRAINTS = {
