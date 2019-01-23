@@ -1,12 +1,33 @@
 import React, { Component } from 'react';
 
-import { recorder, isRecording as isRecordingClass, progressBar, controls, waitingForRecording } from './index.css';
-
-import Loopstation from '../../loopstation';
+import Loopstation from '../../loopstation/Loopstation';
 import Waveform from '../Waveform';
 
-class App extends Component {
-  constructor(props) {
+const {
+  recorder,
+  isRecording: isRecordingClass,
+  progressBar,
+  controls,
+  waitingForRecording,
+} = require('./index.css');
+
+interface State {
+
+}
+
+interface Props {
+  isRecording: boolean;
+  showMeasureEnd: boolean;
+  waitingForRecording: boolean;
+  progress: number;
+  waveformData: AudioBufferSourceNode[];
+  numMeasures: number;
+}
+
+class App extends Component<State, Props> {
+  private loopstation: Loopstation;
+
+  constructor(props: Props) {
     super(props);
     this.state = {
       isRecording: false,
@@ -14,7 +35,7 @@ class App extends Component {
       waitingForRecording: false,
       progress: 0,
       waveformData: [],
-      numMeasures: 1
+      numMeasures: 1,
     };
     this.loopstation = new Loopstation();
     this.toggleRecording = this.toggleRecording.bind(this);
@@ -33,14 +54,14 @@ class App extends Component {
       ...this.state,
       isRecording,
       waitingForRecording: false,
-      waveformData: this.loopstation.audioBuffers
+      waveformData: this.loopstation.getAudioBuffers(),
     });
   }
 
-  onProgress(progress) {
+  onProgress(progress: number) {
     this.setState({
       ...this.state,
-      progress
+      progress,
     });
   }
 
@@ -49,17 +70,18 @@ class App extends Component {
     if (isRecording) {
       this.setState({
         ...this.state,
-        waitingForRecording: true
+        waitingForRecording: true,
       });
       this.loopstation.startRecording();
-    } else
+    } else {
       this.loopstation.stopRecording({ numMeasures: this.state.numMeasures });
+    }
   }
 
-  onMeasureChange(e) {
+  onMeasureChange(e: React.ChangeEvent<HTMLSelectElement>) {
     this.setState({
       ...this.state,
-      numMeasures: e.target.value
+      numMeasures: parseFloat(e.target.value),
     });
   }
 
@@ -88,14 +110,14 @@ class App extends Component {
           <div
             className={progressBar}
             style={{
-              width: `${currProgress}%`
+              width: `${currProgress}%`,
             }}
           />
           <span>{Math.round(currProgress)}%</span>
         </div>
         {
-          this.state.waveformData.map(data =>
-            <Waveform key={data.id} height={80} width={200} data={data} />)
+          this.state.waveformData.map((data, i) =>
+            <Waveform key={i} height={80} width={200} data={data} />)
         }
       </div>
     );

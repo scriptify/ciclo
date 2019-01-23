@@ -1,0 +1,21 @@
+{
+    "presets": ["@babel/preset-typescript"],
+    "env": {
+        "browser": {
+            "plugins": [
+                ["@babel/proposal-decorators", { "legacy": true }],
+                ["@babel/proposal-class-properties", { "loose": true }],
+                "@babel/syntax-dynamic-import"
+            ],
+            "presets": [
+                "@babel/react",
+                [
+                    "@babel/env", {
+                        "modules": false,
+                        "useBuiltIns": "usage"
+                    }
+                ]
+            ]
+        }
+    }
+}
