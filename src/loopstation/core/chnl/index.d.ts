@@ -1,0 +1,3 @@
+interface SerializedChnl {
+  effects: SerializedEffectUnit[];
+}

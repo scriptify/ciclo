@@ -36,7 +36,7 @@ const App = (p: Props) => {
     <GlobalStateListener>
       {
         (globalState, loopstation) => {
-          console.log({ globalState });
+
           return (
             <div className={controls}>
               <div>

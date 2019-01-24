@@ -1,17 +1,10 @@
-import { v4 } from 'uuid';
-
-import EventEmitter from '../util/EventEmitter';
-import MeasureTimer from './MeasureTimer';
-import AudioBufferRecorder from './AudioBufferRecorder';
-import { repeatBuffer, prepareAudioBuffer, resizeAudioBuffer, getResizeFactor } from '../util';
+import EventEmitter from '../../util/EventEmitter';
+import MeasureTimer from '../measure-timer/MeasureTimer';
+import AudioBufferRecorder from '../audio-buffer-recorder/AudioBufferRecorder';
+import { repeatBuffer, prepareAudioBuffer, resizeAudioBuffer, getResizeFactor } from '../../util';
 
 interface StopRecordingParams {
   numMeasures?: number;
-}
-
-export interface LoopstationBuffer {
-  id: string;
-  buffer: AudioBufferSourceNode;
 }
 
 export default class AudioLooper extends EventEmitter {
@@ -23,7 +16,7 @@ export default class AudioLooper extends EventEmitter {
   private recordingOffset: number = 0;
   private bpm: number = 0;
   private clock: MeasureTimer | null = null;
-  private audioBuffers: LoopstationBuffer[] = [];
+  private audioBuffers: AudioBufferSourceNode[] = [];
 
   private firstTrackStartedAt: number = 0;
   private onMeasureStart = () => {};
@@ -136,14 +129,7 @@ export default class AudioLooper extends EventEmitter {
     bufferNode.loop = true;
     bufferNode.buffer = newBuffer;
 
-    bufferNode.connect(this.audioCtx.destination);
-
-    const newLoopstationBuffer = {
-      buffer: bufferNode,
-      id: v4(),
-    };
-
-    this.audioBuffers.push(newLoopstationBuffer);
+    this.audioBuffers.push(bufferNode);
 
     /* const startOffset = this.audioCtx.currentTime +
       (this.measureDuration - this.currentMeasureOffset); */
@@ -159,6 +145,6 @@ export default class AudioLooper extends EventEmitter {
     }
 
     bufferNode.start(startAt, startOffset);
-    this.emit('recordingstop', newLoopstationBuffer);
+    this.emit('recordingstop', bufferNode);
   }
 }
