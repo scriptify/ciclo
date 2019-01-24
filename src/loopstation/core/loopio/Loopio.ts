@@ -175,6 +175,20 @@ export default class Loopio {
     return chnlToApplyEffectTo;
   }
 
+  requireGroupExists(id: string): ChnlGroup {
+    if (!this.state.groups.has(id)) {
+      throw new Error(`This group does not exist: ${id}`);
+    }
+    return this.state.groups.get(id) as ChnlGroup;
+  }
+
+  requireRecordingExists(id: string): SavedRecording {
+    if (!this.state.recordings.has(id)) {
+      throw new Error(`This recording does not exist: ${id}`);
+    }
+    return this.state.recordings.get(id) as SavedRecording;
+  }
+
   /** All methods below modify the state DIRECTLY */
 
   private setActiveGroup(id: string) {
@@ -212,9 +226,7 @@ export default class Loopio {
   }
 
   public selectGroup(id: string) {
-    if (!this.state.groups.has(id)) {
-      throw new Error(`You tried to select an inexistent group: ${id}`);
-    }
+    this.requireGroupExists(id);
     this.setActiveGroup(id);
   }
 
@@ -253,6 +265,39 @@ export default class Loopio {
       effectValueName: 'gain',
       value: 1,
     });
+  }
+
+  public moveRecordingToGroup(groupId: string, recordingId: string) {
+    const group = this.requireGroupExists(groupId);
+    const recording = this.requireRecordingExists(recordingId);
+    // Disconnect from old group
+    recording.disconnectFromGroup();
+    recording.disconnectFromGroup = group.add(recording.bufferChnl.chnl);
+    recording.groupId = groupId;
+    this.onStateChange();
+  }
+
+  public deleteRecording(recordingId: string) {
+    // TODO: Test if it would also work if not disconnected from group
+    //    To see if AudioNode is really garbage collected
+    const recording = this.requireRecordingExists(recordingId);
+    recording.disconnectFromGroup();
+    this.state.recordings.delete(recordingId);
+  }
+
+  public deleteGroup(groupId: string) {
+    const group = this.requireGroupExists(groupId);
+    const recordingsInGroup: string[] = Array
+      .from(this.state.recordings)
+      .filter(([, rec]) => rec.groupId === groupId)
+      .map(([id]) => id);
+
+    recordingsInGroup.forEach((recToDelete) => {
+      this.deleteRecording(recToDelete);
+    });
+
+    group.masterChnl.disconnect(this.master.chnl);
+    this.state.groups.delete(groupId);
   }
 
   public getMaster(): Master {

@@ -84,8 +84,12 @@ export default class Chnl {
     }
   }
 
-  disconnect(target: AudioNode) {
-    this.output.disconnect(target);
+  disconnect(target: EffectUnit | AudioNode | Chnl) {
+    if (target instanceof EffectUnit || target instanceof Chnl) {
+      this.output.disconnect(target.input);
+    } else {
+      this.output.disconnect(target);
+    }
   }
 
   getAnalyser() {
