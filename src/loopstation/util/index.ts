@@ -23,9 +23,29 @@ export function fadeAudioBuffer(audioBuffer: AudioBuffer) {
   }
 }
 
+/**
+ * The value is ceiled if the decimals are bigger then 'from',
+ * otherwise it will be floored.
+ */
+function ceilOrFloor(value: number, from: number) {
+  const valAsStr = `${value}`;
+  const [, afterComma] = valAsStr.split('.');
+  if (!afterComma) return value;
+  const afterCommaVal = parseFloat(`0.${afterComma}`);
+  if (afterCommaVal >= from) return Math.ceil(value);
+  return Math.floor(value);
+}
+
 export function getResizeFactor(firstSampleLength: number, newSampleLength: number) {
+  // If phrase is just slightly longer than the first sample (e.g. 5%),
+  // it will not be enlonged but shortened
+  const PHRASE_MIN_LONGER_THAN_FIRST_SAMPLE = 0.05;
+
   return (
-    (Math.ceil(newSampleLength / firstSampleLength) * firstSampleLength)
+    (
+      ceilOrFloor(newSampleLength / firstSampleLength, PHRASE_MIN_LONGER_THAN_FIRST_SAMPLE)
+      * firstSampleLength
+    )
     / newSampleLength
   );
 }
