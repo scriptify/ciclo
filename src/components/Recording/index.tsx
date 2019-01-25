@@ -30,7 +30,6 @@ const Recording = ({ id, loopioState, loopio }: WithLoopIo<Props>) => {
   const isCurrentlyPaused = isChnlMuted(effects);
 
   const buffer = phrase.recording.bufferChnl.buffer;
-  console.log('re-render');
   return (
     <React.Fragment>
       <MeasureProgress>

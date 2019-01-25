@@ -19,7 +19,7 @@ export default class AudioLooper extends EventEmitter {
   private audioBuffers: AudioBufferSourceNode[] = [];
 
   private firstTrackStartedAt: number = 0;
-  private onMeasureStart = () => {};
+  // private onMeasureStart = () => {};
 
   constructor(audioCtx: AudioContext) {
     super();
@@ -63,7 +63,9 @@ export default class AudioLooper extends EventEmitter {
   }
 
   stopRecording(params: StopRecordingParams) {
-    if (!this.bpm) {
+    // Stopping immediately: new phrase will always be adjusted
+    return this.stopRecordingImmediate(params);
+    /* if (!this.bpm) {
       return this.stopRecordingImmediate(params);
     }
 
@@ -73,7 +75,7 @@ export default class AudioLooper extends EventEmitter {
         await this.stopRecordingImmediate(params);
         resolve();
       };
-    });
+    }); */
   }
 
   private async stopRecordingImmediate({ numMeasures = 1 } = {}) {
@@ -92,7 +94,8 @@ export default class AudioLooper extends EventEmitter {
         audioCtx: this.audioCtx,
       });
       this.emit('timingdataavailable', { bpm: this.bpm, measureDuration: this.measureDuration });
-      this.clock.addEventListener('measurestart', () => this.onMeasureStart());
+
+      // this.clock.addEventListener('measurestart', () => this.onMeasureStart());
 
       if (numMeasures !== 1) {
         const REPEAT_TIMES = numMeasures ** -1;
