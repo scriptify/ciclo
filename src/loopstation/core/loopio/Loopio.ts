@@ -36,6 +36,7 @@ interface LoopIoState {
   /** A recording always belongs to a group */
   recordings: Map<string, SavedRecording>;
   isRecording: boolean;
+  timing: TimingData;
 }
 
 export default class Loopio {
@@ -55,6 +56,10 @@ export default class Loopio {
       activeGroup: '',
       groups: new Map(),
       recordings: new Map(),
+      timing: {
+        bpm: 0,
+        measureDuration: 0,
+      },
     };
 
     this.setup();
@@ -71,6 +76,10 @@ export default class Loopio {
   private setup() {
     this.audioLooper.addEventListener('recordingstart', () => {
       this.setIsRecording(true);
+    });
+
+    this.audioLooper.addEventListener('timingdataavailable', (t: TimingData) => {
+      this.setTimingData(t);
     });
 
     this.audioLooper.addEventListener('recordingstop', (buffer: AudioBufferSourceNode) => {
@@ -192,6 +201,11 @@ export default class Loopio {
     this.onStateChange();
   }
 
+  private setTimingData(t: TimingData) {
+    this.state.timing = t;
+    this.onStateChange();
+  }
+
   /** Public API starting here */
 
   public toggleRecording({ numMeasures = 1 }) {
@@ -295,6 +309,7 @@ export default class Loopio {
 
   public serializeState(): SerializableLoopIoState {
     return {
+      timing: this.state.timing,
       isRecording: this.state.isRecording,
       activeGroup: this.state.activeGroup,
       groups: Array.from(this.state.groups).map(([id, group]) => ({
@@ -313,5 +328,10 @@ export default class Loopio {
 
   public stateChange(cb: (s: SerializableLoopIoState) => void) {
     this.stateChangedCallbacks.push(cb);
+  }
+
+  public getClock() {
+    // Can re-use clock of audioLooper
+    return this.audioLooper.getClock();
   }
 }

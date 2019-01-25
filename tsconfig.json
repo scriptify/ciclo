@@ -9,6 +9,7 @@
         "isolatedModules": true,
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
+        "experimentalDecorators": true,
         "noImplicitReturns": true,
         "noUnusedLocals": true,
         "baseUrl": "./",

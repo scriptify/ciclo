@@ -32,3 +32,8 @@
     width: 60%;
     height: 60%;
 }
+
+.measureProgress {
+    height: 10px;
+    background: red;
+}

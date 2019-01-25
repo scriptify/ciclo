@@ -16,9 +16,12 @@ interface StateRecording {
     };
 }
 
+interface TimingData { bpm: number; measureDuration: number; }
+
 interface SerializableLoopIoState {
   isRecording: boolean;
   activeGroup: string;
+  timing: TimingData;
   groups: StateGroup[];
   recordings: StateRecording[];
 }

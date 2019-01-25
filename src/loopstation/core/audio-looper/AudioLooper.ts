@@ -84,14 +84,14 @@ export default class AudioLooper extends EventEmitter {
       // First track
       this.measureDuration = newBuffer.duration * (numMeasures ** -1);
       this.bpm = (AudioLooper.MEASURE * 60) / this.measureDuration;
-      console.log({ bpm: this.bpm });
+
       this.firstTrackStartedAt = this.audioCtx.currentTime;
       this.clock = new MeasureTimer({
         bpm: this.bpm,
         measure: AudioLooper.MEASURE,
         audioCtx: this.audioCtx,
       });
-      this.clock.addEventListener('progress', (d: number) => this.emit('progress', d));
+      this.emit('timingdataavailable', { bpm: this.bpm, measureDuration: this.measureDuration });
       this.clock.addEventListener('measurestart', () => this.onMeasureStart());
 
       if (numMeasures !== 1) {
@@ -146,5 +146,9 @@ export default class AudioLooper extends EventEmitter {
 
     bufferNode.start(startAt, startOffset);
     this.emit('recordingstop', bufferNode);
+  }
+
+  public getClock() {
+    return this.clock;
   }
 }

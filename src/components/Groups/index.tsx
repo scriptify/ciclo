@@ -1,5 +1,6 @@
 import React from 'react';
-import withLoopIo, { WithLoopIo } from '../../loopstation/bindings/react';
+import { observer } from 'mobx-react';
+import withLoopIo, { WithLoopIo } from '../../loopstation/bindings/mobx';
 
 import Group from '../Group';
 
@@ -13,7 +14,6 @@ interface Props {
 }
 
 const Groups = ({ loopioState, loopio }: WithLoopIo<Props>) => {
-
   return (
     <div className={groups}>
       {
@@ -29,4 +29,4 @@ const Groups = ({ loopioState, loopio }: WithLoopIo<Props>) => {
   );
 };
 
-export default withLoopIo<Props>(Groups);
+export default withLoopIo<Props>(observer(Groups));

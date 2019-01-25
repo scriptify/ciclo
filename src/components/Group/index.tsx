@@ -1,5 +1,7 @@
 import React from 'react';
-import withLoopIo, { WithLoopIo } from '../../loopstation/bindings/react';
+import { observer } from 'mobx-react';
+
+import withLoopIo, { WithLoopIo } from '../../loopstation/bindings/mobx';
 import Recording from '../Recording';
 import { isChnlMuted } from '../../util';
 
@@ -58,4 +60,4 @@ const Group = ({ id, loopioState, loopio }: WithLoopIo<Props>) => {
   );
 };
 
-export default withLoopIo<Props>(Group);
+export default withLoopIo<Props>(observer(Group));

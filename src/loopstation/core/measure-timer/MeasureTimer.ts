@@ -12,7 +12,7 @@ export default class MeasureTimer extends EventEmitter {
   private startedAt: number = 0;
   private audioCtx: AudioContext;
 
-  constructor({ bpm, measure, audioCtx }: MeasureTimerConstructor) {
+  constructor({ bpm, measure = 4, audioCtx }: MeasureTimerConstructor) {
     super();
     this.audioCtx = audioCtx;
     this.measureLength = measure / (bpm / 60);
