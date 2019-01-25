@@ -32,7 +32,9 @@ const RecordingBar = (props: WithLoopIo<Props>) => {
       {() => (
         <div className={recordingContainer}>
           <div className={recordingContent}>
-            <p className={bpm}>120 bpm</p>
+            <p className={bpm}>
+              {loopioState.timing.bpm ? `${loopioState.timing.bpm.toFixed(0)} BPM` : ''}
+            </p>
             <button
               className={classnames(recordBtn, { [isRecording]: loopioState.isRecording })}
               onClick={() => {

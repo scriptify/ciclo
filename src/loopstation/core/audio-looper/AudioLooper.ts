@@ -1,7 +1,7 @@
 import EventEmitter from '../../util/EventEmitter';
 import MeasureTimer from '../measure-timer/MeasureTimer';
 import AudioBufferRecorder from '../audio-buffer-recorder/AudioBufferRecorder';
-import { repeatBuffer, prepareAudioBuffer, resizeAudioBuffer, getResizeFactor } from '../../util';
+import { repeatBuffer, resizeAudioBuffer, getResizeFactor, fadeAudioBuffer } from '../../util';
 
 interface StopRecordingParams {
   numMeasures?: number;
@@ -107,7 +107,7 @@ export default class AudioLooper extends EventEmitter {
       }
     }
 
-    prepareAudioBuffer(newBuffer);
+    fadeAudioBuffer(newBuffer);
 
     // First append empty samples in the beginning according to when the recording was started
     const newSizeWithoutStartOffset = (this.recordingOffset + newBuffer.duration);
@@ -137,9 +137,11 @@ export default class AudioLooper extends EventEmitter {
     /* const startOffset = this.audioCtx.currentTime +
       (this.measureDuration - this.currentMeasureOffset); */
 
-    const timeDiff = this.measureDuration - this.currentMeasureOffset;
+    /* const timeDiff = this.measureDuration - this.currentMeasureOffset;
     let startOffset = this.currentMeasureOffset;
     let startAt = 0;
+
+    console.log(this.currentMeasureOffset, { timeDiff });
 
     if (timeDiff <= 0.1) {
       startOffset = 0;
@@ -147,7 +149,14 @@ export default class AudioLooper extends EventEmitter {
         (this.measureDuration - this.currentMeasureOffset);
     }
 
-    bufferNode.start(startAt, startOffset);
+    */
+
+    const offset = this.currentMeasureOffset +
+      (
+        ((newBuffer.duration / this.measureDuration) - 1) * this.measureDuration
+      );
+
+    bufferNode.start(0, offset);
     this.emit('recordingstop', bufferNode);
   }
 

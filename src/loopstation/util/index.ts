@@ -11,7 +11,7 @@ export function audioDataToBuffer(audioCtx: AudioContext, data: Blob[]): Promise
   });
 }
 
-export function prepareAudioBuffer(audioBuffer: AudioBuffer) {
+export function fadeAudioBuffer(audioBuffer: AudioBuffer) {
   for (let channel = 0; channel < audioBuffer.numberOfChannels; channel += 1) {
     const channelData = audioBuffer.getChannelData(channel);
     const FADE_LENGTH = 100;

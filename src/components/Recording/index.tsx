@@ -2,7 +2,6 @@ import React from 'react';
 import { observer } from 'mobx-react';
 
 import withLoopIo, { WithLoopIo } from '../../loopstation/bindings/mobx';
-import Waveform from '../Waveform';
 import { isChnlMuted } from '../../util';
 import MeasureProgress from '../MeasureProgress';
 
@@ -29,7 +28,6 @@ const Recording = ({ id, loopioState, loopio }: WithLoopIo<Props>) => {
   const { effects } = phrase.recording.bufferChnl.chnl;
   const isCurrentlyPaused = isChnlMuted(effects);
 
-  const buffer = phrase.recording.bufferChnl.buffer;
   return (
     <React.Fragment>
       <MeasureProgress>
@@ -51,10 +49,7 @@ const Recording = ({ id, loopioState, loopio }: WithLoopIo<Props>) => {
           <img src={isCurrentlyPaused ? playIcon : pauseIcon} alt="Pause" />
         </button>
         <div className={phraseWaveform}>
-          {
-            buffer &&
-            <Waveform data={buffer} />
-          }
+
         </div>
         <button className={phraseAction}>
           <img src={effectsIcon} alt="Apply effects" />
