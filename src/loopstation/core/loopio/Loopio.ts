@@ -43,14 +43,12 @@ export default class Loopio {
   private master: Master;
   private audioCtx: AudioContext;
   private state: LoopIoState;
-  private stateChanged: (s: SerializableLoopIoState) => void;
+  private stateChangedCallbacks: ((s: SerializableLoopIoState) => void)[] = [];
 
-  constructor(stateChanged: (s: SerializableLoopIoState) => void) {
+  constructor() {
     this.audioCtx = new AudioContext();
     this.audioLooper = new AudioLooper(this.audioCtx);
     this.master = new Master(this.audioCtx);
-
-    this.stateChanged = stateChanged;
 
     this.state = {
       isRecording: false,
@@ -72,10 +70,11 @@ export default class Loopio {
 
   private setup() {
     this.audioLooper.addEventListener('recordingstart', () => {
-      this.setIsRecording(false);
+      this.setIsRecording(true);
     });
 
     this.audioLooper.addEventListener('recordingstop', (buffer: AudioBufferSourceNode) => {
+      this.setIsRecording(false);
       const newBufferChnl = new BufferChnl(this.audioCtx, buffer);
       this.onNewRecording(newBufferChnl);
     });
@@ -89,7 +88,6 @@ export default class Loopio {
   private onNewRecording(bufferChnl: BufferChnl) {
     let group: ChnlGroup;
     let groupId: string;
-
     if (this.state.activeGroup === '') {
       const { newGroup, newGroupId } = this.addNewGroup();
       group = newGroup;
@@ -118,26 +116,9 @@ export default class Loopio {
     return { newGroup, newGroupId };
   }
 
-  private serializeState(): SerializableLoopIoState {
-    return {
-      isRecording: this.state.isRecording,
-      activeGroup: this.state.activeGroup,
-      groups: Array.from(this.state.groups).map(([id, group]) => ({
-        id,
-        group: group.serialize(),
-      })),
-      recordings: Array.from(this.state.recordings).map(([id, recording]) => ({
-        id,
-        recording: {
-          groupId: recording.groupId,
-          bufferChnl: recording.bufferChnl.serialize(),
-        },
-      })),
-    };
-  }
-
   private onStateChange() {
-    this.stateChanged(this.serializeState());
+    const serializedState = this.serializeState();
+    this.stateChangedCallbacks.forEach(cb => cb(serializedState));
   }
 
   private getChnlFromNode(nodeType: LoopIoNodeType, id?: string): Chnl {
@@ -213,6 +194,14 @@ export default class Loopio {
 
   /** Public API starting here */
 
+  public toggleRecording({ numMeasures = 1 }) {
+    if (this.state.isRecording) {
+      this.stopRecording({ numMeasures });
+    } else {
+      this.startRecording();
+    }
+  }
+
   public startRecording() {
     this.audioLooper.startRecording();
   }
@@ -253,8 +242,8 @@ export default class Loopio {
     this.setEffectValue(nodeType, {
       id,
       effectName: 'gain',
-      effectValueName: 'gain',
-      value: 0,
+      effectValueName: 'muted',
+      value: 1,
     });
   }
 
@@ -262,8 +251,8 @@ export default class Loopio {
     this.setEffectValue(nodeType, {
       id,
       effectName: 'gain',
-      effectValueName: 'gain',
-      value: 1,
+      effectValueName: 'muted',
+      value: 0,
     });
   }
 
@@ -302,5 +291,27 @@ export default class Loopio {
 
   public getMaster(): Master {
     return this.master;
+  }
+
+  public serializeState(): SerializableLoopIoState {
+    return {
+      isRecording: this.state.isRecording,
+      activeGroup: this.state.activeGroup,
+      groups: Array.from(this.state.groups).map(([id, group]) => ({
+        id,
+        group: group.serialize(),
+      })),
+      recordings: Array.from(this.state.recordings).map(([id, recording]) => ({
+        id,
+        recording: {
+          groupId: recording.groupId,
+          bufferChnl: recording.bufferChnl.serialize(),
+        },
+      })),
+    };
+  }
+
+  public stateChange(cb: (s: SerializableLoopIoState) => void) {
+    this.stateChangedCallbacks.push(cb);
   }
 }

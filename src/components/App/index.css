@@ -1,8 +1,11 @@
+/* stylelint-disable */
 body,
-html {
+html,
+:global(#app) {
     height: 100%;
     width: 100%;
 }
+/* stylelint-enable */
 
 body {
     margin: 0;
@@ -12,42 +15,10 @@ body {
     text-align: center;
 }
 
-.recorder {
-    border: none;
-    height: 200px;
-    width: 200px;
-    border-radius: 50%;
-    background: rgb(192, 0, 0);
-    transition: 0.3s background;
-    margin-top: 20px;
-}
-
-.isRecording {
-    background: rgb(0, 115, 192);
-}
-
-.progressBar {
-    height: 30px;
-    background: #000;
-}
-
-.controls {
+.app {
+    height: 100%;
+    width: 100%;
     display: flex;
     flex-flow: column;
-    align-items: center;
-}
-
-.waitingForRecording {
-    background: rgba(2, 142, 235, 0.582);
-    animation: wait 0.5s alternate infinite;
-}
-
-@keyframes wait {
-    from {
-        border-radius: 50%;
-    }
-
-    to {
-        border-radius: 30%;
-    }
+    justify-content: space-between;
 }

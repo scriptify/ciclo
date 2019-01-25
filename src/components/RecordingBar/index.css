@@ -1,0 +1,42 @@
+:root {
+    --recordingBarHeight: 10vh;
+    --recordingBarMargin: 1vh;
+    --recordBtnSize: calc(var(--recordingBarHeight) - var(--recordingBarMargin));
+}
+
+.recordingContainer {
+    height: var(--recordingBarHeight);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: var(--recordingBarMargin);
+}
+
+.recordingContent {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 400px;
+}
+
+.recordBtn {
+    height: var(--recordBtnSize);
+    width: var(--recordBtnSize);
+    border-radius: 50%;
+    background: #4ec7ff;
+    transition: background 0.2s;
+    border: none;
+}
+
+.isRecording {
+    background: #ff4931;
+}
+
+@media screen and (max-width: 600px) {
+    .recordingContainer {
+        padding-left: 3%;
+        padding-right: 3%;
+    }
+}

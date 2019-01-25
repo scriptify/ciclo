@@ -1,26 +1,23 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Loopio from './loopstation/core/loopio/Loopio';
 
-// import App from './components/App';
+import App from './components/App';
 
-const loopio = new Loopio((newState) => {
-  console.log('statechange', newState);
-});
+/* import withLoopio, { WithLoopIo } from './loopstation/bindings/react';
 
-setTimeout(() => {
-  loopio.startRecording();
-  setTimeout(() => {
-    loopio.stopRecording({ numMeasures: 1 });
-    window.setTimeout(() => {
-      loopio.mute('master');
-    },                5000);
-  },         2000);
-},         500);
+interface TestProps {
+  cool: number;
+}
+
+const Test = (props: WithLoopIo<TestProps>) => {
+  return <div>Hello World. Nothing here sorry ma boi.</div>;
+};
+
+const TestWithLoopio = withLoopio<TestProps>(Test); */
 
 ReactDOM.render(
   (
-    <div>Hello World. Nothing here sorry ma boi.</div>
+    <App />
   ),
   document.getElementById('app'),
 );

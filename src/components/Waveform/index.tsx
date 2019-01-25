@@ -1,36 +1,40 @@
 import React, { Component } from 'react';
 
-const { waveformContainer } = require('./index.css');
-
 interface Props {
-  data: AudioBufferSourceNode;
-  height: number;
-  width: number;
+  data: AudioBuffer;
 }
 
-export default class Waveform extends Component<Props, {}> {
+interface State {
+  canvasEl: HTMLCanvasElement | null;
+}
+
+export default class Waveform extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
+    this.state = {
+      canvasEl: null,
+    };
     this.onCanvasRef = this.onCanvasRef.bind(this);
+    this.drawCanvas = this.drawCanvas.bind(this);
   }
 
-  onCanvasRef(canvasEl: HTMLCanvasElement) {
+  drawCanvas(canvasEl = this.state.canvasEl) {
     if (canvasEl) {
-      const { buffer: data } = this.props.data;
+      const { data } = this.props;
       if (!data) return;
       const leftChannelData = data.getChannelData(0);
       const canvasCtx = canvasEl.getContext('2d');
       if (!canvasCtx) return;
-      canvasCtx.clearRect(0, 0, this.props.width, this.props.height);
-      canvasCtx.fillStyle = 'rgb(200, 200, 200)';
-      canvasCtx.fillRect(0, 0, this.props.width, this.props.height);
+      canvasCtx.clearRect(0, 0, canvasEl.width, canvasEl.height);
+      canvasCtx.fillStyle = 'rgb(255, 255, 255)';
+      canvasCtx.fillRect(0, 0, canvasEl.width, canvasEl.height);
       canvasCtx.lineWidth = 2;
-      canvasCtx.strokeStyle = 'rgb(0, 0, 0)';
+      canvasCtx.strokeStyle = 'rgb(168, 168, 168)';
       canvasCtx.beginPath();
-      const sliceWidth = this.props.width * (1 / data.length);
+      const sliceWidth = canvasEl.width * (1 / data.length);
       let x = 0;
       for (let i = 0; i < leftChannelData.length; i += 1) {
-        const y = (leftChannelData[i] * this.props.height) + (this.props.height / 2);
+        const y = (leftChannelData[i] * canvasEl.height) + (canvasEl.height / 2);
         if (i === 0) {
           canvasCtx.moveTo(x, y);
         } else {
@@ -43,13 +47,21 @@ export default class Waveform extends Component<Props, {}> {
     }
   }
 
+  onCanvasRef(canvasEl: HTMLCanvasElement) {
+    if (canvasEl) {
+      this.setState({
+        ...this.state,
+        canvasEl,
+      },            this.drawCanvas);
+    }
+  }
+
   render() {
     const { data, ...rest } = this.props;
+    this.drawCanvas();
     return (
-      <div className={waveformContainer}>
-        <p>{data.buffer ? data.buffer.duration.toFixed(2) : 0}s</p>
-        <canvas {...rest} ref={this.onCanvasRef} />
-      </div>
+      <canvas {...rest}
+        ref={this.onCanvasRef} style={{ width: '100%', height: '100%' }} />
     );
   }
 }
