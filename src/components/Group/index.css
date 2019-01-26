@@ -1,58 +1,66 @@
-/* stylelint-disable no-descending-specificity */
-:root {
-    --materialShadow: 0 3px 10px rgba(0, 0, 0, 0.14);
-    --materialShadowEmphasized: 0 6px 10px rgba(0, 0, 0, 0.14);
-}
-
-.group {
-    height: 100%;
+.groupContainer {
     width: 50%;
-    box-shadow: var(--materialShadow);
-    border-radius: 10px;
-    overflow: hidden;
+    padding: 5%;
+    max-width: 218px;
 }
 
 .groupHeader {
-    height: 15%;
-    width: 100%;
-    display: flex;
-    box-shadow: var(--materialShadow);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.329);
+    border-radius: 10px;
+    padding: 10px;
+    transition: box-shadow 0.3s, color 0.3s;
+    cursor: pointer;
 }
 
-.headerAction {
-    width: 50%;
+.groupHeader:hover,
+.groupHeader:focus,
+.groupHeader:active {
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.329);
+    color: #fff;
+}
+
+.nameRow {
+    display: flex;
+    align-items: center;
+}
+
+.groupName {
+    width: 85%;
+    font-weight: lighter;
+    font-size: 1rem;
+    margin: 0;
+    text-align: left;
+}
+
+.deleteGroupBtn {
+    width: 15%;
     height: 100%;
+    background: none;
     border: none;
     display: flex;
     justify-content: center;
     align-items: center;
-    background: none;
-    cursor: pointer;
 }
 
-.headerAction img {
-    height: 50%;
+.deleteGroupBtn img {
+    height: 30px;
     width: auto;
-    opacity: 0.3;
-    transition: opacity 0.2s;
 }
 
-.headerAction:hover img,
-.headerAction:focus img,
-.headerAction:active img {
-    opacity: 0.5;
+.groupHeader:hover img,
+.groupHeader:focus img,
+.groupHeader:active img {
+    opacity: 1;
 }
 
-.headerAction:first-of-type {
-    border-right: solid 0.5px rgba(0, 0, 0, 0.26);
+.groupActions {
+    display: flex;
+    height: 80%;
 }
 
-.groupContent {
-    padding: 3%;
-}
-
-@media screen and (max-width: 600px) {
-    .group {
-        width: 90%;
-    }
+.groupAction {
+    width: 50%;
+    height: 10vh;
+    border: none;
+    background: none;
 }

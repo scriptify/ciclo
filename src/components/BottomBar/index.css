@@ -1,0 +1,55 @@
+.barContainer {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.445);
+}
+
+.barContainer > * {
+    margin-right: 20px;
+}
+
+.recordBtn,
+.addGroupBtn,
+.toSpeakersBtn {
+    background: none;
+    border: none;
+}
+
+.recordBtn {
+    background: rgb(0, 69, 158);
+    box-shadow: 0 0 15px rgb(0, 69, 158);
+    width: 7vh;
+    height: 7vh;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.recordBtn:hover,
+.recordBtn:focus,
+.recordBtn:active {
+    box-shadow: 0 0 25px rgb(0, 69, 158);
+}
+
+.measure option {
+    background-color: #000;
+    color: #fff;
+}
+
+.toSpeakersBtn img {
+    width: auto;
+    height: 4vh;
+}
+
+.addGroupBtn {
+    height: 3vh;
+    width: 3vh;
+    display: flex;
+    justify-content: center;
+    font-size: 2vh;
+    margin-right: 0;
+    border-radius: 50%;
+    border: solid 1px rgba(255, 255, 255, 0.4);
+    color: rgba(255, 255, 255, 0.4);
+}

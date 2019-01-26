@@ -1,0 +1,43 @@
+.phraseContainer {
+    width: 125px;
+    margin: 10% auto;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.329);
+    border-radius: 10px;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    transition: box-shadow 0.3s, color 0.3s;
+    cursor: pointer;
+}
+
+.phraseContainer:hover,
+.phraseContainer:focus,
+.phraseContainer:active {
+    box-shadow: 0 3px 9px rgba(0, 0, 0, 0.329);
+    color: #fff;
+}
+
+.progressRing > * {
+    margin: 0 auto;
+}
+
+.phraseName {
+    font-size: 0.8rem;
+}
+
+.phraseActions {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: -20%;
+    padding-left: 10%;
+    padding-right: 10%;
+}
+
+.phraseAction {
+    background: none;
+    border: none;
+}
+
+.phraseAction img {
+    height: 20px;
+    width: auto;
+}

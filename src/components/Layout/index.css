@@ -1,0 +1,48 @@
+:root {
+    --barHeight: 12%;
+}
+
+.app {
+    height: 100%;
+    width: 100%;
+}
+
+.contentBar {
+    width: 100%;
+    height: var(--barHeight);
+    position: fixed;
+    display: flex;
+}
+
+.topBar {
+    top: 0;
+}
+
+.bottomBar {
+    bottom: 0;
+}
+
+.scrollContainer {
+    position: fixed;
+    top: var(--barHeight);
+    height: calc(100% - 2 * var(--barHeight));
+    width: 100%;
+    overflow: auto;
+    -ms-overflow-style: none;
+}
+
+.scrollContainer::-webkit-scrollbar {
+    width: 0;  /* remove scrollbar space */
+    background: transparent;  /* optional: just make scrollbar invisible */
+}
+
+.sidePanel {
+    height: 100%;
+    width: 100%;
+    max-width: 700px;
+    position: fixed;
+    top: 0;
+    right: 0;
+    background: blue;
+    overflow: auto;
+}

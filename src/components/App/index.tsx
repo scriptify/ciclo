@@ -1,7 +1,10 @@
 import React from 'react';
-
-import RecordingBar from '../RecordingBar';
+import TopBar from '../TopBar';
+import BottomBar from '../BottomBar';
+import Group from '../Group';
 import Groups from '../Groups';
+import Phrase from '../Phrase';
+import { TopBarContainer, BottomBarContainer, ScrollContainer } from '../Layout';
 
 const {
   app,
@@ -14,8 +17,35 @@ interface Props {
 const App = (p: Props) => {
   return (
     <div className={app}>
-      <Groups />
-      <RecordingBar />
+      <TopBarContainer>
+        <TopBar />
+      </TopBarContainer>
+      <ScrollContainer>
+        <Groups>
+          <Group>
+            <Phrase />
+            <Phrase />
+            <Phrase />
+            <Phrase />
+            <Phrase />
+            <Phrase />
+            <Phrase />
+            <Phrase />
+            <Phrase />
+            <Phrase />
+          </Group>
+          <Group />
+          <Group />
+          <Group />
+          <Group />
+          <Group />
+          <Group />
+          <Group />
+        </Groups>
+      </ScrollContainer>
+      <BottomBarContainer>
+        <BottomBar />
+      </BottomBarContainer>
     </div>
   );
 };

@@ -1,0 +1,58 @@
+/* stylelint-disable no-descending-specificity */
+:root {
+    --materialShadow: 0 3px 10px rgba(0, 0, 0, 0.14);
+    --materialShadowEmphasized: 0 6px 10px rgba(0, 0, 0, 0.14);
+}
+
+.group {
+    height: 100%;
+    width: 50%;
+    box-shadow: var(--materialShadow);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.groupHeader {
+    height: 15%;
+    width: 100%;
+    display: flex;
+    box-shadow: var(--materialShadow);
+}
+
+.headerAction {
+    width: 50%;
+    height: 100%;
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: none;
+    cursor: pointer;
+}
+
+.headerAction img {
+    height: 50%;
+    width: auto;
+    opacity: 0.3;
+    transition: opacity 0.2s;
+}
+
+.headerAction:hover img,
+.headerAction:focus img,
+.headerAction:active img {
+    opacity: 0.5;
+}
+
+.headerAction:first-of-type {
+    border-right: solid 0.5px rgba(0, 0, 0, 0.26);
+}
+
+.groupContent {
+    padding: 3%;
+}
+
+@media screen and (max-width: 600px) {
+    .group {
+        width: 90%;
+    }
+}
