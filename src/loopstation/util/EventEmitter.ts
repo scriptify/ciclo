@@ -15,6 +15,14 @@ export default class EventEmitter {
     }
   }
 
+  removeAll() {
+    this.events = {};
+  }
+
+  removeEventListener(type: string, cb: Function): void {
+    this.events[type] = this.events[type].filter(currCb => currCb.toString() !== cb.toString());
+  }
+
   emit(type: string, data?: any): void {
     if (!this.events[type]) return;
     this.events[type].forEach(cb => cb(data));

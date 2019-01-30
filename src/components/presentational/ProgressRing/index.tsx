@@ -33,7 +33,6 @@ export default class ProgressRing extends React.Component<Props> {
         <circle
           style={{
             strokeDashoffset,
-            transition: 'stroke-dashoffset 0.35s',
             transform: 'rotate(-90deg)',
             transformOrigin: '50% 50%',
           }}

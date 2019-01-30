@@ -7,6 +7,7 @@ import { isChnlMuted } from '../../../util';
 import GroupsPresentational from '../../presentational/Groups';
 import GroupPresentational from '../../presentational/Group';
 import PhrasePresentational from '../../presentational/Phrase';
+import MeasureProgress from '../../stateful/MeasureProgress';
 
 interface Props {
 
@@ -47,21 +48,24 @@ const Groups = (props: WithLoopIo<Props>) => {
                       const isMuted = isChnlMuted(phrase.recording.bufferChnl.chnl.effects);
 
                       return (
-                        <PhrasePresentational
-                          key={phrase.id}
-                          name={`Phrase ${i + 1}`}
-                          onDelete={() => loopio.deleteRecording(phrase.id)}
-                          onEditEffects={() => {}}
-                          onMute={() => {
-                            if (isCurrentlyPaused) {
-                              loopio.unmute('recording', phrase.id);
-                            } else {
-                              loopio.mute('recording', phrase.id);
-                            }
-                          }}
-                          isMuted={isMuted}
-                          progress={60}
-                        />
+                        <MeasureProgress key={phrase.id}>
+                          {progress => (
+                            <PhrasePresentational
+                              name={`Phrase ${i + 1}`}
+                              onDelete={() => loopio.deleteRecording(phrase.id)}
+                              onEditEffects={() => {}}
+                              onMute={() => {
+                                if (isCurrentlyPaused) {
+                                  loopio.unmute('recording', phrase.id);
+                                } else {
+                                  loopio.mute('recording', phrase.id);
+                                }
+                              }}
+                              isMuted={isMuted}
+                              progress={Math.round(progress * 100)}
+                            />
+                          )}
+                        </MeasureProgress>
                       );
                     })
                   }
