@@ -41,3 +41,7 @@
     height: 20px;
     width: auto;
 }
+
+.isMuted {
+    opacity: 0.3;
+}

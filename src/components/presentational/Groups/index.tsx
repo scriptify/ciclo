@@ -8,10 +8,10 @@ const {
   groupsContainer,
 } = require('./index.css');
 
-const Group = ({ children }: Props) => (
+const Groups = ({ children }: Props) => (
   <div className={groupsContainer}>
     {children}
   </div>
 );
 
-export default Group;
+export default Groups;

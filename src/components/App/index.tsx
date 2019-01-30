@@ -1,10 +1,8 @@
 import React from 'react';
-import TopBar from '../TopBar';
-import BottomBar from '../BottomBar';
-import Group from '../Group';
-import Groups from '../Groups';
-import Phrase from '../Phrase';
-import { TopBarContainer, BottomBarContainer, ScrollContainer } from '../Layout';
+import BottomBar from '../stateful/BottomBar';
+import TopBar from '../stateful/TopBar';
+import Groups from '../stateful/Groups';
+import { TopBarContainer, BottomBarContainer, ScrollContainer } from '../presentational/Layout';
 
 const {
   app,
@@ -21,27 +19,7 @@ const App = (p: Props) => {
         <TopBar />
       </TopBarContainer>
       <ScrollContainer>
-        <Groups>
-          <Group>
-            <Phrase />
-            <Phrase />
-            <Phrase />
-            <Phrase />
-            <Phrase />
-            <Phrase />
-            <Phrase />
-            <Phrase />
-            <Phrase />
-            <Phrase />
-          </Group>
-          <Group />
-          <Group />
-          <Group />
-          <Group />
-          <Group />
-          <Group />
-          <Group />
-        </Groups>
+        <Groups />
       </ScrollContainer>
       <BottomBarContainer>
         <BottomBar />

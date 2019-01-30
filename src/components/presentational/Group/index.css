@@ -64,3 +64,7 @@
     border: none;
     background: none;
 }
+
+.isSelected {
+    background: #000;
+}

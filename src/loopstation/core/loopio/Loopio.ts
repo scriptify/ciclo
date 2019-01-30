@@ -286,6 +286,7 @@ export default class Loopio {
     const recording = this.requireRecordingExists(recordingId);
     recording.disconnectFromGroup();
     this.state.recordings.delete(recordingId);
+    this.onStateChange();
   }
 
   public deleteGroup(groupId: string) {
@@ -301,6 +302,13 @@ export default class Loopio {
 
     group.masterChnl.disconnect(this.master.chnl);
     this.state.groups.delete(groupId);
+
+    // if group was active group, reset active group
+    if (this.state.activeGroup === groupId) {
+      this.setActiveGroup('');
+    }
+
+    this.onStateChange();
   }
 
   public getMaster(): Master {
