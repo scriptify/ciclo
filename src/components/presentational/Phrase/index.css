@@ -16,8 +16,10 @@
     color: #fff;
 }
 
-.progressRing > * {
+.togglePlayback img {
     margin: 0 auto;
+    height: 5vh;
+    width: auto;
 }
 
 .phraseName {
@@ -27,9 +29,9 @@
 .phraseActions {
     display: flex;
     justify-content: space-between;
-    margin-bottom: -20%;
     padding-left: 10%;
     padding-right: 10%;
+    margin-bottom: -10%;
 }
 
 .phraseAction {

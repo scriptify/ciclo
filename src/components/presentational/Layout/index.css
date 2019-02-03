@@ -24,8 +24,8 @@
 
 .scrollContainer {
     position: fixed;
-    top: var(--barHeight);
-    height: calc(100% - 2 * var(--barHeight));
+    top: 0;
+    height: calc(100% - 1 * var(--barHeight));
     width: 100%;
     overflow: auto;
     -ms-overflow-style: none;

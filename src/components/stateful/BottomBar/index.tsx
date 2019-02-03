@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Observer } from 'mobx-react';
 
-import withLoopIo, { WithLoopIo } from '../../../loopstation/bindings/mobx';
+import withAppState, { WithAppState } from '../../../app-state';
 
 import BottomBarPresentational from '../../presentational/BottomBar';
 
@@ -9,15 +9,16 @@ interface Props {
 
 }
 
-const RecordingBar = (props: WithLoopIo<Props>) => {
+const RecordingBar = (props: WithAppState<Props>) => {
   const [currentMeasure, setCurrentMeasure]  = useState<number>(1);
 
-  const { loopioState, loopio } = props;
-
+  const { loopioState, loopio, uiState } = props;
   return (
     <Observer>
       {() => (
         <BottomBarPresentational
+          bpm={loopioState.timing.bpm}
+          measureProgress={Math.round(uiState.measureProgress * 100)}
           currentMeasure={currentMeasure}
           hideChangeMeasure={loopioState.recordings.length > 0}
           isRecording={loopioState.isRecording}
@@ -32,4 +33,4 @@ const RecordingBar = (props: WithLoopIo<Props>) => {
   );
 };
 
-export default withLoopIo<Props>(RecordingBar);
+export default withAppState<Props>(RecordingBar);

@@ -1,19 +1,18 @@
 import React from 'react';
 import { Observer } from 'mobx-react';
 
-import withLoopIo, { WithLoopIo } from '../../../loopstation/bindings/mobx';
+import withAppState, { WithAppState } from '../../../app-state';
 import { isChnlMuted } from '../../../util';
 
 import GroupsPresentational from '../../presentational/Groups';
 import GroupPresentational from '../../presentational/Group';
 import PhrasePresentational from '../../presentational/Phrase';
-import MeasureProgress from '../../stateful/MeasureProgress';
 
 interface Props {
 
 }
 
-const Groups = (props: WithLoopIo<Props>) => {
+const Groups = (props: WithAppState<Props>) => {
   const { loopioState, loopio } = props;
 
   return (
@@ -44,33 +43,24 @@ const Groups = (props: WithLoopIo<Props>) => {
                   onSelect={() => loopio.selectGroup(group.id)}
                 >
                   {
-                    phrasesOfGroup.map((phrase, i) => {
+                    phrasesOfGroup.reverse().map((phrase, i) => {
                       const isMuted = isChnlMuted(phrase.recording.bufferChnl.chnl.effects);
 
                       return (
-                        <MeasureProgress key={phrase.id}>
-                          {(progress) => {
-                            const actualProgress = progress;
-                            return (
-                              <PhrasePresentational
-                                name={`Phrase ${i + 1}`}
-                                onDelete={() => loopio.deleteRecording(phrase.id)}
-                                onEditEffects={() => {}}
-                                onMute={() => {
-                                  if (isMuted) {
-                                    loopio.unmute('recording', phrase.id);
-                                  } else {
-                                    loopio.mute('recording', phrase.id);
-                                  }
-                                }}
-                                isMuted={isMuted}
-                                progress={
-                                  Math.round(actualProgress * 100)
-                                }
-                              />
-                            );
+                        <PhrasePresentational
+                          key={phrase.id}
+                          name={`Phrase ${phrasesOfGroup.length - i}`}
+                          onDelete={() => loopio.deleteRecording(phrase.id)}
+                          onEditEffects={() => {}}
+                          onMute={() => {
+                            if (isMuted) {
+                              loopio.unmute('recording', phrase.id);
+                            } else {
+                              loopio.mute('recording', phrase.id);
+                            }
                           }}
-                        </MeasureProgress>
+                          isMuted={isMuted}
+                        />
                       );
                     })
                   }
@@ -84,4 +74,4 @@ const Groups = (props: WithLoopIo<Props>) => {
   );
 };
 
-export default withLoopIo<Props>(Groups);
+export default withAppState<Props>(Groups);

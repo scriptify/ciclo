@@ -1,14 +1,14 @@
 import React from 'react';
 import classnames from 'classnames';
 
-import ProgressRing from '../ProgressRing';
-
 const effectsIcon = require('../../../img/effects.svg');
 const trashIcon = require('../../../img/trash.svg');
+const playIcon = require('../../../img/play.svg');
+const pauseIcon = require('../../../img/pause.svg');
 
 const {
   phraseContainer,
-  progressRing,
+  togglePlayback,
   phraseName,
   phraseActions,
   phraseAction,
@@ -19,7 +19,6 @@ interface Props {
   onDelete: () => void;
   onEditEffects: () => void;
   onMute: () => void;
-  progress: number;
   name: string;
   isMuted: boolean;
 }
@@ -27,7 +26,6 @@ interface Props {
 const Phrase = ({
   onDelete,
   onEditEffects,
-  progress,
   name,
   isMuted,
   onMute,
@@ -42,10 +40,16 @@ const Phrase = ({
       </button>
     </div>
     <div
-      className={classnames(progressRing, { [isMutedClass]: isMuted })}
+      className={classnames(togglePlayback, { [isMutedClass]: isMuted })}
       onClick={onMute}
     >
-      <ProgressRing progress={progress} radius={30} stroke={5} color="rgb(0, 69, 158)" />
+      {
+        isMuted ? (
+          <img src={playIcon} alt="Start playback" />
+        ) : (
+          <img src={pauseIcon} alt="Pause playback" />
+        )
+      }
     </div>
     <div className={phraseName}>{name}</div>
   </div>

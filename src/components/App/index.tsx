@@ -15,9 +15,6 @@ interface Props {
 const App = (p: Props) => {
   return (
     <div className={app}>
-      <TopBarContainer>
-        <TopBar />
-      </TopBarContainer>
       <ScrollContainer>
         <Groups />
       </ScrollContainer>

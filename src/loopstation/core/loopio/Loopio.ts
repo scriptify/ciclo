@@ -334,8 +334,15 @@ export default class Loopio {
     };
   }
 
+  /**
+   * Passed callback will be called on state change.
+   * Returns a function which removes the listener
+   */
   public stateChange(cb: (s: SerializableLoopIoState) => void) {
     this.stateChangedCallbacks.push(cb);
+    return () => {
+      this.stateChangedCallbacks = this.stateChangedCallbacks.filter(currCb => currCb !== cb);
+    };
   }
 
   public getClock() {

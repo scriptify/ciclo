@@ -1,7 +1,7 @@
 import React from 'react';
 import { Observer } from 'mobx-react';
 
-import withLoopIo, { WithLoopIo } from '../../../loopstation/bindings/mobx';
+import withAppState, { WithAppState } from '../../../app-state';
 
 import TopBarPresentational from '../../presentational/TopBar';
 
@@ -9,7 +9,7 @@ interface Props {
 
 }
 
-const TopBar = (props: WithLoopIo<Props>) => {
+const TopBar = (props: WithAppState<Props>) => {
   const { loopioState } = props;
 
   return (
@@ -23,4 +23,4 @@ const TopBar = (props: WithLoopIo<Props>) => {
   );
 };
 
-export default withLoopIo<Props>(TopBar);
+export default withAppState<Props>(TopBar);
