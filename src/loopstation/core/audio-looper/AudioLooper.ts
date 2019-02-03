@@ -1,7 +1,13 @@
 import EventEmitter from '../../util/EventEmitter';
 import MeasureTimer from '../measure-timer/MeasureTimer';
 import AudioBufferRecorder from '../audio-buffer-recorder/AudioBufferRecorder';
-import { repeatBuffer, resizeAudioBuffer, getResizeFactor, fadeAudioBuffer } from '../../util';
+import {
+  repeatBuffer,
+  resizeAudioBuffer,
+  getResizeFactor,
+  fadeAudioBuffer,
+  PHRASE_MIN_LONGER_THAN_FIRST_SAMPLE,
+} from '../../util';
 
 interface StopRecordingParams {
   numMeasures?: number;
@@ -157,10 +163,21 @@ export default class AudioLooper extends EventEmitter {
       ); */
 
     // const offset = this.currentMeasureOffset;
-    const startAt = isFirstTrack ? 0 : this.measureDuration - this.currentMeasureOffset;
-    console.log(startAt);
+    let startAt = this.measureDuration - this.currentMeasureOffset;
+    let offset = 0;
 
-    bufferNode.start(this.audioCtx.currentTime + startAt, 0);
+    const isOffsetOnlyMinimal = (this.currentMeasureOffset /  this.measureDuration)
+      <= PHRASE_MIN_LONGER_THAN_FIRST_SAMPLE;
+
+    // If phrase is just slightly longer than the first phase, it was shortened
+    // To the length of the first phase and can thus be played immediatly
+    // with the offset set to the difference
+    if (isOffsetOnlyMinimal) {
+      startAt = 0;
+      offset = this.measureDuration;
+    }
+
+    bufferNode.start(this.audioCtx.currentTime + startAt, offset);
     this.emit('recordingstop', bufferNode);
   }
 

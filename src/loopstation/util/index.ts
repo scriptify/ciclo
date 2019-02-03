@@ -36,11 +36,11 @@ function ceilOrFloor(value: number, from: number) {
   return Math.floor(value);
 }
 
-export function getResizeFactor(firstSampleLength: number, newSampleLength: number) {
-  // If phrase is just slightly longer than the first sample (e.g. 5%),
-  // it will not be enlonged but shortened
-  const PHRASE_MIN_LONGER_THAN_FIRST_SAMPLE = 0.05;
+// If phrase is just slightly longer than the first sample (e.g. 5%),
+// it will not be enlonged but shortened
+export const PHRASE_MIN_LONGER_THAN_FIRST_SAMPLE = 0.05;
 
+export function getResizeFactor(firstSampleLength: number, newSampleLength: number) {
   return (
     (
       ceilOrFloor(newSampleLength / firstSampleLength, PHRASE_MIN_LONGER_THAN_FIRST_SAMPLE)
