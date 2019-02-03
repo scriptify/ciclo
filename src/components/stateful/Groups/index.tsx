@@ -49,22 +49,27 @@ const Groups = (props: WithLoopIo<Props>) => {
 
                       return (
                         <MeasureProgress key={phrase.id}>
-                          {progress => (
-                            <PhrasePresentational
-                              name={`Phrase ${i + 1}`}
-                              onDelete={() => loopio.deleteRecording(phrase.id)}
-                              onEditEffects={() => {}}
-                              onMute={() => {
-                                if (isCurrentlyPaused) {
-                                  loopio.unmute('recording', phrase.id);
-                                } else {
-                                  loopio.mute('recording', phrase.id);
+                          {(progress) => {
+                            const actualProgress = progress;
+                            return (
+                              <PhrasePresentational
+                                name={`Phrase ${i + 1}`}
+                                onDelete={() => loopio.deleteRecording(phrase.id)}
+                                onEditEffects={() => {}}
+                                onMute={() => {
+                                  if (isMuted) {
+                                    loopio.unmute('recording', phrase.id);
+                                  } else {
+                                    loopio.mute('recording', phrase.id);
+                                  }
+                                }}
+                                isMuted={isMuted}
+                                progress={
+                                  Math.round(actualProgress * 100)
                                 }
-                              }}
-                              isMuted={isMuted}
-                              progress={Math.round(progress * 100)}
-                            />
-                          )}
+                              />
+                            );
+                          }}
                         </MeasureProgress>
                       );
                     })

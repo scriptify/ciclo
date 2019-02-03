@@ -5,6 +5,8 @@ interface Props {
   children: (progress: number) => ReactNode;
 }
 
+let removeListener = () => {};
+
 const MeasureProgress = ({ loopio, children }: WithLoopIo<Props>) => {
   const [progressState, setProgressState] = useState<[boolean, number]>([false, 0]);
 
@@ -19,17 +21,13 @@ const MeasureProgress = ({ loopio, children }: WithLoopIo<Props>) => {
       const timer = loopio.getClock();
       if (timer) {
         setProgressState([true, 0]);
-        timer.addEventListener('progress', onUpdate);
+        removeListener = timer.addEventListener('progress', onUpdate);
         return () => {};
       }
     }
 
     return () => {
-      const timer = loopio.getClock();
-      if (timer) {
-        timer.removeEventListener('progress', onUpdate);
-      }
-      console.log('remove');
+      removeListener();
     };
   },        [wasInitialized]);
 

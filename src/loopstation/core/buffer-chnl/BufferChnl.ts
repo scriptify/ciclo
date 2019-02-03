@@ -13,7 +13,7 @@ export default class BufferChnl {
   serialize() {
     return {
       chnl: this.chnl.serialize(),
-      buffer: this.buffer.buffer,
+      duration: this.buffer.buffer !== null ? this.buffer.buffer.duration : 0,
     };
   }
 }
