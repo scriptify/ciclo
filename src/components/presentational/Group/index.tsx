@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react';
 import classnames from 'classnames';
+import { DropTarget, DropTargetConnector, DropTargetMonitor, ConnectDropTarget } from 'react-dnd';
 
 const trashIcon = require('../../../img/trash.svg');
 const muteIcon = require('../../../img/mute.svg');
@@ -20,6 +21,7 @@ const {
 
 interface Props {
   children?: ReactNode | string;
+  id: string;
   onDelete: () => void;
   onEditEffects: () => void;
   onMute: () => void;
@@ -27,6 +29,11 @@ interface Props {
   name: string;
   isMuted: boolean;
   isSelected: boolean;
+}
+
+interface DropTargetProps {
+  connectDropTarget: ConnectDropTarget;
+  canDrop: boolean;
 }
 
 const Group = ({
@@ -38,7 +45,8 @@ const Group = ({
   name,
   isMuted,
   isSelected,
-}: Props) => (
+  connectDropTarget,
+}: Props & DropTargetProps) => connectDropTarget(
   <div className={groupContainer} onClick={onSelect}>
     <header className={classnames(groupHeader, { [isSelectedClass]: isSelected })}>
       <div className={nameRow}>
@@ -72,7 +80,20 @@ const Group = ({
     <div className={phrasesContainer}>
       {children}
     </div>
-  </div>
+  </div>,
 );
 
-export default Group;
+function collect(connect: DropTargetConnector, monitor: DropTargetMonitor) {
+  return {
+    connectDropTarget: connect.dropTarget(),
+    candDrop: monitor.canDrop(),
+  };
+}
+
+const target = {
+  drop(props: Props) {
+    return { id: props.id };
+  },
+};
+
+export default DropTarget('phrase', target, collect)(Group);

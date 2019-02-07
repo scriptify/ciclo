@@ -1,4 +1,10 @@
 import React from 'react';
+import { DragDropContext } from 'react-dnd';
+// import HTML5Backend from 'react-dnd-html5-backend';
+
+import MultiBackend from 'react-dnd-multi-backend';
+import HTML5toTouch from 'react-dnd-multi-backend/lib/HTML5toTouch';
+
 import BottomBar from '../stateful/BottomBar';
 import Groups from '../stateful/Groups';
 import { BottomBarContainer, ScrollContainer } from '../presentational/Layout';
@@ -24,4 +30,4 @@ const App = (p: Props) => {
   );
 };
 
-export default App;
+export default DragDropContext(MultiBackend(HTML5toTouch))(App);

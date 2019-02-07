@@ -28,6 +28,7 @@ const Groups = (props: WithAppState<Props>) => {
               return (
                 <GroupPresentational
                   key={group.id}
+                  id={group.id}
                   isSelected={group.id === loopioState.activeGroup}
                   name={`Group ${i + 1}`}
                   onDelete={() => loopio.deleteGroup(group.id)}
@@ -49,8 +50,12 @@ const Groups = (props: WithAppState<Props>) => {
                       return (
                         <PhrasePresentational
                           key={phrase.id}
+                          id={phrase.id}
                           name={`Phrase ${phrasesOfGroup.length - i}`}
                           onDelete={() => loopio.deleteRecording(phrase.id)}
+                          onGroupChange={(newGroupId) => {
+                            loopio.moveRecordingToGroup(newGroupId, phrase.id);
+                          }}
                           onEditEffects={() => {}}
                           onMute={() => {
                             if (isMuted) {

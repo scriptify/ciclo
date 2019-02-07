@@ -174,7 +174,7 @@ export default class AudioLooper extends EventEmitter {
     // with the offset set to the difference
     if (isOffsetOnlyMinimal) {
       startAt = 0;
-      offset = this.measureDuration;
+      offset = this.currentMeasureOffset;
     }
 
     bufferNode.start(this.audioCtx.currentTime + startAt, offset);
