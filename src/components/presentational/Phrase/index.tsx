@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import classnames from 'classnames';
 import { DragSource, DragSourceConnector, ConnectDragSource } from 'react-dnd';
 import { DragDropMonitor } from 'dnd-core';
@@ -25,8 +25,10 @@ interface Props {
   onEditEffects: () => void;
   onMute: () => void;
   onGroupChange: (id: string) => void;
+  onNameChange: (newName: string) => void;
   name: string;
   isMuted: boolean;
+  data: AudioBuffer | null;
 }
 
 interface DragProps {
@@ -59,10 +61,12 @@ const Phrase = ({
   name,
   isMuted,
   onMute,
-  isDragging,
   connectDragSource,
   onGroupChange,
+  onNameChange,
 }: Props & DragProps) => {
+  const [isEditingName, toggleEditName] = useState<boolean>(false);
+
   onGroupChangeCb = onGroupChange;
   return connectDragSource(
     <div className={phraseContainer}>
@@ -86,7 +90,29 @@ const Phrase = ({
           )
         }
       </div>
-      <div className={phraseName}>{name}</div>
+      {
+        isEditingName ? (
+          <input
+            type="string"
+            className={phraseName}
+            value={name}
+            onChange={(e) => {
+              const { value } = e.target;
+              onNameChange(value);
+            }}
+            onBlur={() => {
+              toggleEditName(false);
+            }}
+          />
+        ) : (
+          <div
+            className={phraseName}
+            onClick={() => {
+              toggleEditName(true);
+            }}
+          >{name}</div>
+        )
+      }
     </div>,
   );
 };

@@ -13,7 +13,7 @@ interface Props {
 }
 
 const Groups = (props: WithAppState<Props>) => {
-  const { loopioState, loopio } = props;
+  const { loopioState, loopio, uiState } = props;
 
   return (
     <Observer>
@@ -46,16 +46,21 @@ const Groups = (props: WithAppState<Props>) => {
                   {
                     phrasesOfGroup.reverse().map((phrase, i) => {
                       const isMuted = isChnlMuted(phrase.recording.bufferChnl.chnl.effects);
+                      const phraseName = uiState.phraseNames.get(phrase.id);
 
                       return (
                         <PhrasePresentational
                           key={phrase.id}
                           id={phrase.id}
-                          name={`Phrase ${phrasesOfGroup.length - i}`}
+                          name={phraseName || ''}
                           onDelete={() => loopio.deleteRecording(phrase.id)}
                           onGroupChange={(newGroupId) => {
                             loopio.moveRecordingToGroup(newGroupId, phrase.id);
                           }}
+                          onNameChange={(name: string) => {
+                            uiState.setPhraseName(phrase.id, name);
+                          }}
+                          data={phrase.recording.bufferChnl.buffer}
                           onEditEffects={() => {}}
                           onMute={() => {
                             if (isMuted) {

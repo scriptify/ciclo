@@ -177,6 +177,8 @@ export default class AudioLooper extends EventEmitter {
       offset = this.currentMeasureOffset;
     }
 
+    console.log(newBuffer.duration, this.measureDuration);
+
     bufferNode.start(this.audioCtx.currentTime + startAt, offset);
     this.emit('recordingstop', bufferNode);
   }

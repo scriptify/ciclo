@@ -24,6 +24,11 @@
 
 .phraseName {
     font-size: 0.8rem;
+    border: none;
+    width: 100%;
+    text-align: center;
+    background: none;
+    color: inherit;
 }
 
 .phraseActions {

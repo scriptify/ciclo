@@ -1,11 +1,12 @@
 import React from 'react';
-import { observable } from 'mobx';
+import { observable, action } from 'mobx';
 import { WithLoopIoProps, store, loopio } from '../loopstation/bindings/mobx';
 
 class UiStore {
   private clearStateChangeCb: () => void;
 
   @observable measureProgress: number = 0;
+  @observable phraseNames: Map<string, string> = new Map();
 
   constructor() {
     this.clearStateChangeCb = loopio.stateChange(() => {
@@ -17,6 +18,19 @@ class UiStore {
         });
       }
     });
+
+    loopio.stateChange((newState) => {
+      // Add names for new phrases
+      newState.recordings.forEach((phrase) => {
+        if (!this.phraseNames.has(phrase.id)) {
+          this.phraseNames.set(phrase.id, `Phrase ${newState.recordings.length}`);
+        }
+      });
+    });
+  }
+
+  @action setPhraseName(id: string, newName: string) {
+    this.phraseNames.set(id, newName);
   }
 }
 

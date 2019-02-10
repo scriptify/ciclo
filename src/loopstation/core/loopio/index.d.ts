@@ -12,6 +12,7 @@ interface StateRecording {
         bufferChnl: {
             chnl: SerializedChnl;
             duration: number;
+            buffer: AudioBuffer | null;
         };
     };
 }
