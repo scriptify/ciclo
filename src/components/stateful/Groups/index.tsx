@@ -33,7 +33,9 @@ const Groups = (props: WithAppState<Props>) => {
                   name={`Group ${i + 1}`}
                   onDelete={() => loopio.deleteGroup(group.id)}
                   isMuted={isCurrentlyPaused}
-                  onEditEffects={() => {}}
+                  onEditEffects={() => {
+                    uiState.addToEffectEditor(group.id, 'group');
+                  }}
                   onMute={() => {
                     if (isCurrentlyPaused) {
                       loopio.unmute('group', group.id);
@@ -61,7 +63,9 @@ const Groups = (props: WithAppState<Props>) => {
                             uiState.setPhraseName(phrase.id, name);
                           }}
                           data={phrase.recording.bufferChnl.buffer}
-                          onEditEffects={() => {}}
+                          onEditEffects={() => {
+                            uiState.addToEffectEditor(phrase.id, 'recording');
+                          }}
                           onMute={() => {
                             if (isMuted) {
                               loopio.unmute('recording', phrase.id);

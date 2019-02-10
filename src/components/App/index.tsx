@@ -7,6 +7,7 @@ import HTML5toTouch from 'react-dnd-multi-backend/lib/HTML5toTouch';
 
 import BottomBar from '../stateful/BottomBar';
 import Groups from '../stateful/Groups';
+import EffectEditor from '../stateful/EffectEditor';
 import { BottomBarContainer, ScrollContainer } from '../presentational/Layout';
 
 const {
@@ -26,6 +27,7 @@ const App = (p: Props) => {
       <BottomBarContainer>
         <BottomBar />
       </BottomBarContainer>
+      <EffectEditor />
     </div>
   );
 };

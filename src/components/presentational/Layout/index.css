@@ -43,6 +43,6 @@
     position: fixed;
     top: 0;
     right: 0;
-    background: blue;
+    background: rgb(39, 39, 39);
     overflow: auto;
 }

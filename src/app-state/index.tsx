@@ -7,6 +7,8 @@ class UiStore {
 
   @observable measureProgress: number = 0;
   @observable phraseNames: Map<string, string> = new Map();
+  @observable isEffectEditorOpen: boolean  = false;
+  @observable effectEditorItems: ({ id: string, type: LoopIoNodeType })[] = [];
 
   constructor() {
     this.clearStateChangeCb = loopio.stateChange(() => {
@@ -31,6 +33,21 @@ class UiStore {
 
   @action setPhraseName(id: string, newName: string) {
     this.phraseNames.set(id, newName);
+  }
+
+  @action addToEffectEditor(id: string, type: LoopIoNodeType) {
+    this.isEffectEditorOpen = true;
+    if (!!!this.effectEditorItems.find(item => item.id === id)) {
+      this.effectEditorItems.push({ id, type });
+    }
+  }
+
+  @action removeFromEffectEditor(id: string) {
+    this.effectEditorItems = this.effectEditorItems.filter(item => item.id !== id);
+  }
+
+  @action closeEffectEditor() {
+    this.isEffectEditorOpen = false;
   }
 }
 

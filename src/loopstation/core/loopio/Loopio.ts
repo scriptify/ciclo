@@ -14,8 +14,6 @@ interface SavedRecording {
   disconnectFromGroup: () => void;
 }
 
-type LoopIoNodeType = 'master' | 'recording' | 'group';
-
 interface SetEffectValueParams {
   id?: string;
   effectName: keyof EffectsCollection;

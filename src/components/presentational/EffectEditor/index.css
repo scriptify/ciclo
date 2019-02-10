@@ -1,0 +1,15 @@
+.effectEditorHeader {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.effectEditorHeader button {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.effectEditorHeader button img {
+    height: 40px;
+    width: auto;
+}

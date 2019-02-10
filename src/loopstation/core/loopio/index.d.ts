@@ -26,3 +26,5 @@ interface SerializableLoopIoState {
   groups: StateGroup[];
   recordings: StateRecording[];
 }
+
+type LoopIoNodeType = 'master' | 'recording' | 'group';
