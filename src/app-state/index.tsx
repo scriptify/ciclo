@@ -6,7 +6,7 @@ class UiStore {
   private clearStateChangeCb: () => void;
 
   @observable measureProgress: number = 0;
-  @observable phraseNames: Map<string, string> = new Map();
+  @observable namings: Map<string, string> = new Map();
   @observable isEffectEditorOpen: boolean  = false;
   @observable effectEditorItems: ({ id: string, type: LoopIoNodeType })[] = [];
 
@@ -22,17 +22,23 @@ class UiStore {
     });
 
     loopio.stateChange((newState) => {
-      // Add names for new phrases
+      // Add names for new phrases / groups
       newState.recordings.forEach((phrase) => {
-        if (!this.phraseNames.has(phrase.id)) {
-          this.phraseNames.set(phrase.id, `Phrase ${newState.recordings.length}`);
+        if (!this.namings.has(phrase.id)) {
+          this.namings.set(phrase.id, `Phrase ${newState.recordings.length}`);
+        }
+      });
+
+      newState.groups.forEach((group) => {
+        if (!this.namings.has(group.id)) {
+          this.namings.set(group.id, `Group ${newState.groups.length}`);
         }
       });
     });
   }
 
-  @action setPhraseName(id: string, newName: string) {
-    this.phraseNames.set(id, newName);
+  @action setNaming(id: string, newName: string) {
+    this.namings.set(id, newName);
   }
 
   @action addToEffectEditor(id: string, type: LoopIoNodeType) {

@@ -24,7 +24,7 @@ const EffectEditor = (props: WithAppState<Props>) => {
               if (!group) return { id: '', name: '', effects: [], type: 'group' as LoopIoNodeType };
               return {
                 id: group.id,
-                name: 'A group',
+                name: uiState.namings.get(group.id) || '',
                 type: 'group' as LoopIoNodeType,
                 effects: group.group.masterChnl.effects,
               };
@@ -35,7 +35,7 @@ const EffectEditor = (props: WithAppState<Props>) => {
             }
             return {
               id: phrase.id,
-              name: uiState.phraseNames.get(phrase.id) || '',
+              name: uiState.namings.get(phrase.id) || '',
               effects: phrase.recording.bufferChnl.chnl.effects,
               type: 'recording' as LoopIoNodeType,
             };

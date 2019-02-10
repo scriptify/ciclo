@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useState } from 'react';
 import classnames from 'classnames';
 import { DropTarget, DropTargetConnector, DropTargetMonitor, ConnectDropTarget } from 'react-dnd';
 
@@ -26,6 +26,7 @@ interface Props {
   onEditEffects: () => void;
   onMute: () => void;
   onSelect: () => void;
+  onNameChange: (newName: string) => void;
   name: string;
   isMuted: boolean;
   isSelected: boolean;
@@ -46,42 +47,69 @@ const Group = ({
   isMuted,
   isSelected,
   connectDropTarget,
-}: Props & DropTargetProps) => connectDropTarget(
-  <div className={groupContainer} onClick={onSelect}>
-    <header className={classnames(groupHeader, { [isSelectedClass]: isSelected })}>
-      <div className={nameRow}>
-        <h2 className={groupName}>{name}</h2>
-        <button
-          className={deleteGroupBtn}
-          onClick={(e) => {
-            // Do not fire onSelect event
-            e.stopPropagation();
-            onDelete();
-          }}
-        >
-          <img src={trashIcon} alt="Delete group" />
-        </button>
-      </div>
-      <div className={groupActions}>
-        <button className={groupAction} onClick={onMute}>
+  onNameChange,
+}: Props & DropTargetProps) => {
+  const [isEditingName, toggleEditName] = useState<boolean>(false);
+
+  return connectDropTarget(
+    <div className={groupContainer} onClick={onSelect}>
+      <header className={classnames(groupHeader, { [isSelectedClass]: isSelected })}>
+        <div className={nameRow}>
           {
-            isMuted ? (
-              <img src={unmuteIcon} alt="Unmute group" />
+            isEditingName ? (
+              <input
+                type="string"
+                className={groupName}
+                value={name}
+                onChange={(e) => {
+                  const { value } = e.target;
+                  onNameChange(value);
+                }}
+                onBlur={() => {
+                  toggleEditName(false);
+                }}
+              />
             ) : (
-              <img src={muteIcon} alt="Mute group" />
+              <h2
+                className={groupName}
+                onClick={() => {
+                  toggleEditName(true);
+                }}
+              >{name}</h2>
             )
           }
-        </button>
-        <button className={groupAction} onClick={onEditEffects}>
-          <img src={effectsIcon} alt="Edit group effects" />
-        </button>
+          <button
+            className={deleteGroupBtn}
+            onClick={(e) => {
+              // Do not fire onSelect event
+              e.stopPropagation();
+              onDelete();
+            }}
+          >
+            <img src={trashIcon} alt="Delete group" />
+          </button>
+        </div>
+        <div className={groupActions}>
+          <button className={groupAction} onClick={onMute}>
+            {
+              isMuted ? (
+                <img src={unmuteIcon} alt="Unmute group" />
+              ) : (
+                <img src={muteIcon} alt="Mute group" />
+              )
+            }
+          </button>
+          <button className={groupAction} onClick={onEditEffects}>
+            <img src={effectsIcon} alt="Edit group effects" />
+          </button>
+        </div>
+      </header>
+      <div className={phrasesContainer}>
+        {children}
       </div>
-    </header>
-    <div className={phrasesContainer}>
-      {children}
-    </div>
-  </div>,
-);
+    </div>,
+  );
+};
 
 function collect(connect: DropTargetConnector, monitor: DropTargetMonitor) {
   return {

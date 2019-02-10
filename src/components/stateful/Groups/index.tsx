@@ -21,6 +21,7 @@ const Groups = (props: WithAppState<Props>) => {
         <GroupsPresentational>
           {
             loopioState.groups.map((group, i)  => {
+              const groupName = uiState.namings.get(group.id);
               const isCurrentlyPaused = isChnlMuted(group.group.masterChnl.effects);
               const phrasesOfGroup = loopioState.recordings
                 .filter(r => r.recording.groupId === group.id);
@@ -30,7 +31,7 @@ const Groups = (props: WithAppState<Props>) => {
                   key={group.id}
                   id={group.id}
                   isSelected={group.id === loopioState.activeGroup}
-                  name={`Group ${i + 1}`}
+                  name={groupName || ''}
                   onDelete={() => loopio.deleteGroup(group.id)}
                   isMuted={isCurrentlyPaused}
                   onEditEffects={() => {
@@ -44,11 +45,14 @@ const Groups = (props: WithAppState<Props>) => {
                     }
                   }}
                   onSelect={() => loopio.selectGroup(group.id)}
+                  onNameChange={(name: string) => {
+                    uiState.setNaming(group.id, name);
+                  }}
                 >
                   {
                     phrasesOfGroup.reverse().map((phrase, i) => {
                       const isMuted = isChnlMuted(phrase.recording.bufferChnl.chnl.effects);
-                      const phraseName = uiState.phraseNames.get(phrase.id);
+                      const phraseName = uiState.namings.get(phrase.id);
 
                       return (
                         <PhrasePresentational
@@ -60,7 +64,7 @@ const Groups = (props: WithAppState<Props>) => {
                             loopio.moveRecordingToGroup(newGroupId, phrase.id);
                           }}
                           onNameChange={(name: string) => {
-                            uiState.setPhraseName(phrase.id, name);
+                            uiState.setNaming(phrase.id, name);
                           }}
                           data={phrase.recording.bufferChnl.buffer}
                           onEditEffects={() => {

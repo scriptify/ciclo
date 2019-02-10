@@ -30,6 +30,9 @@
     font-size: 1rem;
     margin: 0;
     text-align: left;
+    background: none;
+    border: none;
+    color: inherit;
 }
 
 .deleteGroupBtn {
