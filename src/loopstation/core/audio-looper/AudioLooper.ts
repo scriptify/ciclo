@@ -44,8 +44,7 @@ export default class AudioLooper extends EventEmitter {
   startRecording() {
     const record = async () => {
       this.emit('recordingstart');
-      await this.recorder.start();
-      const timeDiff = this.measureDuration - this.currentMeasureOffset;
+      /* const timeDiff = this.measureDuration - this.currentMeasureOffset;
       if (timeDiff <= 0.1) {
         this.recordingOffset = 0;
       } else {
@@ -54,7 +53,10 @@ export default class AudioLooper extends EventEmitter {
 
       if (this.recordingOffset < 0) {
         this.recordingOffset = 0;
-      }
+      } */
+      await this.recorder.start();
+      this.recordingOffset = 0;
+      console.log(this.currentMeasureOffset);
     };
     return record();
     /* if (this.bpm === null)
@@ -88,6 +90,7 @@ export default class AudioLooper extends EventEmitter {
     let newBuffer = await this.recorder.stop();
 
     const isFirstTrack = !this.measureDuration;
+    console.time('start rec method');
     if (isFirstTrack) {
       // First track
       this.measureDuration = newBuffer.duration * (numMeasures ** -1);
@@ -176,11 +179,10 @@ export default class AudioLooper extends EventEmitter {
       startAt = 0;
       offset = this.currentMeasureOffset;
     }
-
-    console.log(newBuffer.duration, this.measureDuration);
-
+    console.log({ startAt, offset });
     bufferNode.start(this.audioCtx.currentTime + startAt, offset);
     this.emit('recordingstop', bufferNode);
+    console.timeEnd('start rec method');
   }
 
   public getClock() {
