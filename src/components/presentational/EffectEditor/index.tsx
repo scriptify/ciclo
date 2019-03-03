@@ -12,19 +12,25 @@ const {
   effect,
   effectValues,
   effectValue,
+  effectsToggle,
+  effectToggleElem,
 } = require('./index.css');
 
-interface ValueChangeParams {
+interface EffectIdParams {
   id: string;
   effectName: string;
+  elementType: LoopIoNodeType;
+}
+
+interface ValueChangeParams extends EffectIdParams {
   valueName: string;
   newValue: number;
-  elementType: LoopIoNodeType;
 }
 
 interface Props {
   onClose: () => void;
   onValueChange: (params: ValueChangeParams) => void;
+  onEffectToggle: (params: EffectIdParams) => void;
   elements: {
     id: string;
     name: string;
@@ -85,7 +91,7 @@ const Effect = ({ currEffect, onValueChange }: EffectProps) => (
   </Observer>
 );
 
-const EffectEditor = ({ onClose, elements, onValueChange }: Props) => {
+const EffectEditor = ({ onClose, elements, onValueChange, onEffectToggle }: Props) => {
   return (
     <Observer>
       {() => (
@@ -100,6 +106,27 @@ const EffectEditor = ({ onClose, elements, onValueChange }: Props) => {
               elements.map(currElem => (
                 <div className={element} key={currElem.id}>
                   <h2>{currElem.name}</h2>
+                  <div className={effectsToggle}>
+                    {
+                      currElem.effects.map(effect => (
+                        <div className={effectToggleElem} key={effect.name}>
+                          <label htmlFor={effect.name}>{effect.name}</label>
+                          <input
+                            id={effect.name}
+                            type="checkbox"
+                            checked={effect.state.isEnabled}
+                            onChange={() => {
+                              onEffectToggle({
+                                effectName: effect.name,
+                                elementType: currElem.type,
+                                id: currElem.id,
+                              });
+                            }}
+                          />
+                        </div>
+                      ))
+                    }
+                  </div>
                   <div className={effects}>
                     {
                       currElem.effects

@@ -16,9 +16,13 @@ import createReverb, { reverbData } from './effects/reverb'; */
 
 import createGain, { gainData } from './effects/gain';
 import EffectUnit from '../effect-unit/EffectUnit';
+import createFreeverb, { freeverbData } from './effects/freeverb';
+import createConvolutionalReverb, { convolutionalReverbData } from './effects/reverb';
 
 export const EFFECT_DATA = [
   gainData,
+  freeverbData,
+  convolutionalReverbData,
   /* highpassData,
   lowpassData,
   dubDelayData,
@@ -44,6 +48,8 @@ export default function createEffectCollection(audioCtx: AudioContext): EffectsC
 
   return {
     gain: createGain(audioCtx),
+    freeverb: createFreeverb(audioCtx),
+    convolutionalReverb: createConvolutionalReverb(audioCtx),
     /* lowpass: createLowpass(audioCtx),
     highpass: createHighpass(audioCtx),
     dubDelay: createDubDelay(audioCtx),

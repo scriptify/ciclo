@@ -236,9 +236,11 @@ export default class Loopio {
     const effect = Loopio.getEffectOfChnl(chnl, payload.effectName);
     const isEnabled = payload.isEnabled || effect.serialize().state.isEnabled;
     if (isEnabled) {
-      effect.enable();
-    } else {
+      chnl.removeEffect(payload.effectName);
       effect.disable();
+    } else {
+      effect.enable();
+      chnl.addEffect(payload.effectName);
     }
     this.onStateChange();
   }

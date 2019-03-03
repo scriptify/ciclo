@@ -46,6 +46,12 @@ const EffectEditor = (props: WithAppState<Props>) => {
             <EffectEditorPresentational
               onClose={() => uiState.closeEffectEditor()}
               elements={effectsToEdit}
+              onEffectToggle={(params) => {
+                loopio.toggleEffect(params.elementType, {
+                  effectName: params.effectName,
+                  id: params.id,
+                });
+              }}
               onValueChange={(params) => {
                 loopio.setEffectValue(params.elementType, {
                   effectName: params.effectName,

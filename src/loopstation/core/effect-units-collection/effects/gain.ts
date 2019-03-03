@@ -46,6 +46,7 @@ export default function createGain(audioCtx: AudioContext) {
 
   const gainNode = new EffectUnit(options, audioCtx);
 
+  // Enabled by default
   gainNode.enable();
 
   return gainNode;
