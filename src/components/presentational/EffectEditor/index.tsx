@@ -14,12 +14,17 @@ const {
   effectValue,
   effectsToggle,
   effectToggleElem,
+  enabled,
+  elementTitle,
 } = require('./index.css');
 
-interface EffectIdParams {
+interface IdParams {
   id: string;
-  effectName: string;
   elementType: LoopIoNodeType;
+}
+
+interface EffectIdParams extends IdParams {
+  effectName: string;
 }
 
 interface ValueChangeParams extends EffectIdParams {
@@ -31,6 +36,7 @@ interface Props {
   onClose: () => void;
   onValueChange: (params: ValueChangeParams) => void;
   onEffectToggle: (params: EffectIdParams) => void;
+  onElementRemove: (params: IdParams) => void;
   elements: {
     id: string;
     name: string;
@@ -91,7 +97,13 @@ const Effect = ({ currEffect, onValueChange }: EffectProps) => (
   </Observer>
 );
 
-const EffectEditor = ({ onClose, elements, onValueChange, onEffectToggle }: Props) => {
+const EffectEditor = ({
+  onClose,
+  elements,
+  onValueChange,
+  onEffectToggle,
+  onElementRemove,
+}: Props) => {
   return (
     <Observer>
       {() => (
@@ -105,25 +117,36 @@ const EffectEditor = ({ onClose, elements, onValueChange, onEffectToggle }: Prop
             {
               elements.map(currElem => (
                 <div className={element} key={currElem.id}>
-                  <h2>{currElem.name}</h2>
+                  <div className={elementTitle}>
+                    <h2>{currElem.name}</h2>
+                    <button onClick={() => {
+                      onElementRemove({
+                        elementType: currElem.type,
+                        id: currElem.id,
+                      });
+                    }}>
+                      <img src={closeIcon} alt="Remove element from editor" />
+                    </button>
+                  </div>
                   <div className={effectsToggle}>
                     {
                       currElem.effects.map(effect => (
-                        <div className={effectToggleElem} key={effect.name}>
-                          <label htmlFor={effect.name}>{effect.name}</label>
-                          <input
-                            id={effect.name}
-                            type="checkbox"
-                            checked={effect.state.isEnabled}
-                            onChange={() => {
-                              onEffectToggle({
-                                effectName: effect.name,
-                                elementType: currElem.type,
-                                id: currElem.id,
-                              });
-                            }}
-                          />
-                        </div>
+                        <button
+                          className={
+                            effect.state.isEnabled ?
+                            `${effectToggleElem} ${enabled}` : effectToggleElem
+                          }
+                          key={effect.name}
+                          onClick={() => {
+                            onEffectToggle({
+                              effectName: effect.name,
+                              elementType: currElem.type,
+                              id: currElem.id,
+                            });
+                          }}
+                        >
+                          {effect.name}
+                        </button>
                       ))
                     }
                   </div>

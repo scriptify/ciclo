@@ -52,6 +52,9 @@ const EffectEditor = (props: WithAppState<Props>) => {
                   id: params.id,
                 });
               }}
+              onElementRemove={({ id }) => {
+                uiState.removeFromEffectEditor(id);
+              }}
               onValueChange={(params) => {
                 loopio.setEffectValue(params.elementType, {
                   effectName: params.effectName,

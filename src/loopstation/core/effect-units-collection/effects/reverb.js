@@ -176,7 +176,7 @@ export const reverbData = {
         defaultValue: false
       },
       set: (effectChain, value) => {
-        effectChain.reverse.reverse = value;
+        effectChain.reverb.reverse = value;
       }
     }
 
