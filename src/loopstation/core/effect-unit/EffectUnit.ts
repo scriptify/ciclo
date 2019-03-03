@@ -1,6 +1,11 @@
 import { functionsToValues, bindMethodsToValues, objToArray, filterValue } from './util';
 
-class EffectUnit {
+interface Connectable {
+  input: AudioNode;
+  connect: (to: AudioNode) => void;
+}
+
+class EffectUnit implements Connectable {
 
   public name: string;
   public isEffectUnit: boolean = true;
@@ -63,11 +68,11 @@ class EffectUnit {
     };
   }
 
-  static connectNodes(nodeA: AudioNode | EffectUnit, nodeB: AudioNode | EffectUnit) {
-    if (nodeB instanceof EffectUnit) {
-      nodeA.connect(nodeB.input);
-    } else {
+  static connectNodes(nodeA: AudioNode | Connectable, nodeB: AudioNode | Connectable) {
+    if (nodeB instanceof AudioNode) {
       nodeA.connect(nodeB);
+    } else {
+      nodeA.connect(nodeB.input);
     }
   }
 
