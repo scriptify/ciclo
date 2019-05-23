@@ -71,9 +71,10 @@ export default class Chnl {
   }
 
   removeEffect(name: keyof EffectsCollection) {
-    this.setupGraph(
-      this.currentGraph.filter(node =>  (node instanceof EffectUnit) && node.name !== name),
-    );
+    const newGraph = this.currentGraph
+      .filter(node =>  (node instanceof EffectUnit) && node.name !== name);
+    console.log(newGraph);
+    this.setupGraph([this.input, ...newGraph, this.output]);
   }
 
   connect(node: EffectUnit | AudioNode | Chnl) {

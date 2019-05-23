@@ -179,7 +179,6 @@ export const reverbData = {
         effectChain.reverb.reverse = value;
       }
     }
-
   ]
 };
 
@@ -187,7 +186,9 @@ export default function createReverbDelay(audioCtx) {
   return new EffectUnit({
     ...reverbData,
     effectChain: {
-      reverb: () => new Reverb(audioCtx)
+      reverb: () => {
+				return new Reverb(audioCtx);
+			}
     }
   }, audioCtx);
 }

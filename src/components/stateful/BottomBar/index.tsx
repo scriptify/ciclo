@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Observer } from 'mobx-react';
 
 import withAppState, { WithAppState } from '../../../app-state';
@@ -11,8 +11,21 @@ interface Props {
 
 const RecordingBar = (props: WithAppState<Props>) => {
   const [currentMeasure, setCurrentMeasure]  = useState<number>(1);
+  const [wasSetup, setup] = useState<boolean>(false);
 
   const { loopioState, loopio, uiState } = props;
+
+  useEffect(() => {
+    if (!wasSetup) {
+      setup(true);
+      window.addEventListener('keydown', (e) => {
+        if (e.keyCode === 32) {
+          loopio.toggleRecording({ numMeasures: currentMeasure });
+        }
+      });
+    }
+  });
+
   return (
     <Observer>
       {() => (
