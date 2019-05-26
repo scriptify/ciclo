@@ -8,15 +8,12 @@ import HTML5toTouch from 'react-dnd-multi-backend/lib/HTML5toTouch';
 import BottomBar from '../stateful/BottomBar';
 import Groups from '../stateful/Groups';
 import EffectEditor from '../stateful/EffectEditor';
+import ExternalAudioModules from '../stateful/ExternalAudioModules';
 import { BottomBarContainer, ScrollContainer } from '../presentational/Layout';
 
-const {
-  app,
-} = require('./index.css');
+const { app } = require('./index.css');
 
-interface Props {
-
-}
+interface Props {}
 
 const App = (p: Props) => {
   return (
@@ -28,6 +25,7 @@ const App = (p: Props) => {
         <BottomBar />
       </BottomBarContainer>
       <EffectEditor />
+      <ExternalAudioModules />
     </div>
   );
 };

@@ -4,7 +4,12 @@
   "rules": {
     "no-boolean-literal-compare": true,
     "import-name": false,
-    "variable-name": false
+    "variable-name": false,
+    "ter-arrow-parens": false,
+    "align": false,
+    "ter-func-call-spacing": false,
+    "space-before-function-paren": false,
+    "max-line-length": false
   },
   "jsRules": {
     "no-empty": true

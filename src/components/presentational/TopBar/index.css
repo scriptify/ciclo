@@ -1,33 +1,33 @@
 .barContainer {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-left: 5%;
-    padding-right: 5%;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.445);
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 5%;
+  padding-right: 5%;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.445);
 }
 
 .recordBtn,
 .effectsBtn {
-    background: none;
-    border: none;
-    height: 7vh;
+  background: none;
+  border: none;
+  height: 7vh;
 }
 
 .recordBtn {
-    background: rgb(0, 69, 158);
-    box-shadow: 0 0 15px rgb(0, 69, 158);
-    width: 7vh;
-    border-radius: 50%;
+  background: rgb(0, 69, 158);
+  box-shadow: 0 0 15px rgb(0, 69, 158);
+  width: 7vh;
+  border-radius: 50%;
 }
 
 .recordBtn:hover,
 .recordBtn:focus,
 .recordBtn:active {
-    box-shadow: 0 0 25px rgb(0, 69, 158);
+  box-shadow: 0 0 25px rgb(0, 69, 158);
 }
 
 .effectsBtn img {
-    width: auto;
+  width: auto;
 }

@@ -19,6 +19,7 @@ interface Props {
   onCreateNewGroup: () => void;
   currentMeasure: number;
   onMeasureChange: (m: number) => void;
+  onOpenAudioModulesList: () => void;
   hideChangeMeasure: boolean;
   bpm: number;
   measureProgress: number;
@@ -29,6 +30,7 @@ const BottomBar = ({
   onMeasureChange: onMeasureChangeProp,
   onRecordingToggle,
   onCreateNewGroup,
+  onOpenAudioModulesList,
   hideChangeMeasure,
   isRecording,
   bpm,
@@ -41,23 +43,21 @@ const BottomBar = ({
 
   return (
     <div className={barContainer}>
-      <button className={toSpeakersBtn}>
+      <button className={toSpeakersBtn} onClick={onOpenAudioModulesList}>
         <img src={volumeIcon} alt="Redirect mic input to speakers" />
       </button>
-      {
-        !hideChangeMeasure && (
-          <select
-            className={measure}
-            value={currentMeasure}
-            onChange={onMeasureChange}
-          >
-            <option value={1}>1</option>
-            <option value={1 / 2}>1/2</option>
-            <option value={1 / 4}>1/4</option>
-            <option value={1 / 8}>1/8</option>
-          </select>
-        )
-      }
+      {!hideChangeMeasure && (
+        <select
+          className={measure}
+          value={currentMeasure}
+          onChange={onMeasureChange}
+        >
+          <option value={1}>1</option>
+          <option value={1 / 2}>1/2</option>
+          <option value={1 / 4}>1/4</option>
+          <option value={1 / 8}>1/8</option>
+        </select>
+      )}
       <button
         className={classnames(recordBtn, { [isRecordingClass]: isRecording })}
         onClick={onRecordingToggle}
@@ -68,13 +68,11 @@ const BottomBar = ({
           stroke={5}
           color="rgb(0, 69, 158)"
         />
-        {
-          bpm !== 0 && (
-            <span>{bpm.toFixed()} BPM</span>
-          )
-        }
+        {bpm !== 0 && <span>{bpm.toFixed()} BPM</span>}
       </button>
-      <button className={addGroupBtn} onClick={onCreateNewGroup}>+</button>
+      <button className={addGroupBtn} onClick={onCreateNewGroup}>
+        +
+      </button>
     </div>
   );
 };

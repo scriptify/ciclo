@@ -1,0 +1,39 @@
+.externalAudioModules {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.externalAudioModulesList {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  height: 100%;
+  justify-content: space-around;
+}
+
+.externalAudioModule {
+  background: none;
+  border: none;
+  color: #fff;
+}
+
+.externalAudioModule img {
+  height: 70px;
+  width: auto;
+}
+
+.closeBtn {
+  float: right;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.closeBtn img {
+  height: 40px;
+  width: auto;
+}

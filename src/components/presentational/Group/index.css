@@ -1,73 +1,73 @@
 .groupContainer {
-    width: 50%;
-    padding: 5%;
-    max-width: 218px;
+  width: 50%;
+  padding: 5%;
+  max-width: 218px;
 }
 
 .groupHeader {
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.329);
-    border-radius: 10px;
-    padding: 10px;
-    transition: box-shadow 0.3s, color 0.3s;
-    cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.329);
+  border-radius: 10px;
+  padding: 10px;
+  transition: box-shadow 0.3s, color 0.3s;
+  cursor: pointer;
 }
 
 .groupHeader:hover,
 .groupHeader:focus,
 .groupHeader:active {
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.329);
-    color: #fff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.329);
+  color: #fff;
 }
 
 .nameRow {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .groupName {
-    width: 85%;
-    font-weight: lighter;
-    font-size: 1rem;
-    margin: 0;
-    text-align: left;
-    background: none;
-    border: none;
-    color: inherit;
+  width: 85%;
+  font-weight: lighter;
+  font-size: 1rem;
+  margin: 0;
+  text-align: left;
+  background: none;
+  border: none;
+  color: inherit;
 }
 
 .deleteGroupBtn {
-    width: 15%;
-    height: 100%;
-    background: none;
-    border: none;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  width: 15%;
+  height: 100%;
+  background: none;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .deleteGroupBtn img {
-    height: 30px;
-    width: auto;
+  height: 30px;
+  width: auto;
 }
 
 .groupHeader:hover img,
 .groupHeader:focus img,
 .groupHeader:active img {
-    opacity: 1;
+  opacity: 1;
 }
 
 .groupActions {
-    display: flex;
-    height: 80%;
+  display: flex;
+  height: 80%;
 }
 
 .groupAction {
-    width: 50%;
-    height: 10vh;
-    border: none;
-    background: none;
+  width: 50%;
+  height: 10vh;
+  border: none;
+  background: none;
 }
 
 .isSelected {
-    background: #000;
+  background: #000;
 }

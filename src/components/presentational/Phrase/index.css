@@ -1,54 +1,54 @@
 .phraseContainer {
-    width: 125px;
-    margin: 10% auto;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.329);
-    border-radius: 10px;
-    padding-top: 7px;
-    padding-bottom: 7px;
-    transition: box-shadow 0.3s, color 0.3s;
-    cursor: pointer;
+  width: 125px;
+  margin: 10% auto;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.329);
+  border-radius: 10px;
+  padding-top: 7px;
+  padding-bottom: 7px;
+  transition: box-shadow 0.3s, color 0.3s;
+  cursor: pointer;
 }
 
 .phraseContainer:hover,
 .phraseContainer:focus,
 .phraseContainer:active {
-    box-shadow: 0 3px 9px rgba(0, 0, 0, 0.329);
-    color: #fff;
+  box-shadow: 0 3px 9px rgba(0, 0, 0, 0.329);
+  color: #fff;
 }
 
 .togglePlayback img {
-    margin: 0 auto;
-    height: 5vh;
-    width: auto;
+  margin: 0 auto;
+  height: 5vh;
+  width: auto;
 }
 
 .phraseName {
-    font-size: 0.8rem;
-    border: none;
-    width: 100%;
-    text-align: center;
-    background: none;
-    color: inherit;
+  font-size: 0.8rem;
+  border: none;
+  width: 100%;
+  text-align: center;
+  background: none;
+  color: inherit;
 }
 
 .phraseActions {
-    display: flex;
-    justify-content: space-between;
-    padding-left: 10%;
-    padding-right: 10%;
-    margin-bottom: -10%;
+  display: flex;
+  justify-content: space-between;
+  padding-left: 10%;
+  padding-right: 10%;
+  margin-bottom: -10%;
 }
 
 .phraseAction {
-    background: none;
-    border: none;
+  background: none;
+  border: none;
 }
 
 .phraseAction img {
-    height: 20px;
-    width: auto;
+  height: 20px;
+  width: auto;
 }
 
 .isMuted {
-    opacity: 0.3;
+  opacity: 0.3;
 }

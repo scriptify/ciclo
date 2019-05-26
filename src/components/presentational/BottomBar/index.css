@@ -1,67 +1,67 @@
 .barContainer {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.445);
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.445);
 }
 
 .barContainer > * {
-    margin-right: 20px;
+  margin-right: 20px;
 }
 
 .recordBtn,
 .addGroupBtn,
 .toSpeakersBtn {
-    background: none;
-    border: none;
+  background: none;
+  border: none;
 }
 
 .recordBtn {
-    cursor: pointer;
-    color: rgb(150, 150, 150);
-    font-weight: bold;
+  cursor: pointer;
+  color: rgb(150, 150, 150);
+  font-weight: bold;
 }
 
 .recordBtn:hover,
 .recordBtn:focus,
 .recordBtn:active {
-    box-shadow: none;
+  box-shadow: none;
 }
 
 .recordBtn.isRecording {
-    animation: recordingAnim 0.4s infinite alternate linear;
+  animation: recordingAnim 0.4s infinite alternate linear;
 }
 
 @keyframes recordingAnim {
-    from {
-        opacity: 1;
-    }
+  from {
+    opacity: 1;
+  }
 
-    to {
-        opacity: 0.4;
-    }
+  to {
+    opacity: 0.4;
+  }
 }
 
 .measure,
 .measure option {
-    background-color: rgba(0, 0, 0, 0.76);
-    color: #fff;
+  background-color: rgba(0, 0, 0, 0.76);
+  color: #fff;
 }
 
 .toSpeakersBtn img {
-    width: auto;
-    height: 4vh;
+  width: auto;
+  height: 4vh;
 }
 
 .addGroupBtn {
-    height: 3vh;
-    width: 3vh;
-    display: flex;
-    justify-content: center;
-    font-size: 2vh;
-    margin-right: 0;
-    border-radius: 50%;
-    border: solid 1px rgba(255, 255, 255, 0.4);
-    color: rgba(255, 255, 255, 0.4);
+  height: 3vh;
+  width: 3vh;
+  display: flex;
+  justify-content: center;
+  font-size: 2vh;
+  margin-right: 0;
+  border-radius: 50%;
+  border: solid 1px rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.4);
 }

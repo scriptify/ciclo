@@ -7,8 +7,9 @@ class UiStore {
 
   @observable measureProgress: number = 0;
   @observable namings: Map<string, string> = new Map();
-  @observable isEffectEditorOpen: boolean  = false;
-  @observable effectEditorItems: ({ id: string, type: LoopIoNodeType })[] = [];
+  @observable isEffectEditorOpen: boolean = false;
+  @observable isExternalAudioModulesListOpen: boolean = false;
+  @observable effectEditorItems: ({ id: string; type: LoopIoNodeType })[] = [];
 
   constructor() {
     this.clearStateChangeCb = loopio.stateChange(() => {
@@ -21,15 +22,15 @@ class UiStore {
       }
     });
 
-    loopio.stateChange((newState) => {
+    loopio.stateChange(newState => {
       // Add names for new phrases / groups
-      newState.recordings.forEach((phrase) => {
+      newState.recordings.forEach(phrase => {
         if (!this.namings.has(phrase.id)) {
           this.namings.set(phrase.id, `Phrase ${newState.recordings.length}`);
         }
       });
 
-      newState.groups.forEach((group) => {
+      newState.groups.forEach(group => {
         if (!this.namings.has(group.id)) {
           this.namings.set(group.id, `Group ${newState.groups.length}`);
         }
@@ -49,11 +50,21 @@ class UiStore {
   }
 
   @action removeFromEffectEditor(id: string) {
-    this.effectEditorItems = this.effectEditorItems.filter(item => item.id !== id);
+    this.effectEditorItems = this.effectEditorItems.filter(
+      item => item.id !== id,
+    );
   }
 
   @action closeEffectEditor() {
     this.isEffectEditorOpen = false;
+  }
+
+  @action openExternalAudioModulesList() {
+    this.isExternalAudioModulesListOpen = true;
+  }
+
+  @action closeExternalAudioModulesList() {
+    this.isExternalAudioModulesListOpen = false;
   }
 }
 
@@ -68,9 +79,7 @@ export type WithAppState<P> = P & WithAppStateProps;
 export default function withAppState<TProps>(
   WrappedComponent: React.ComponentType<WithAppState<TProps>>,
 ): React.ComponentClass<TProps> {
-
   class WithLoopIoClass extends React.Component<TProps> {
-
     render() {
       const props = {
         ...this.props,

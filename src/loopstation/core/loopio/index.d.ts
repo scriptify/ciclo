@@ -1,23 +1,26 @@
 interface StateGroup {
-    id: string;
-    group: {
-        masterChnl: SerializedChnl;
-    };
+  id: string;
+  group: {
+    masterChnl: SerializedChnl;
+  };
 }
 
 interface StateRecording {
-    id: string;
-    recording: {
-        groupId: string;
-        bufferChnl: {
-            chnl: SerializedChnl;
-            duration: number;
-            buffer: AudioBuffer | null;
-        };
+  id: string;
+  recording: {
+    groupId: string;
+    bufferChnl: {
+      chnl: SerializedChnl;
+      duration: number;
+      buffer: AudioBuffer | null;
     };
+  };
 }
 
-interface TimingData { bpm: number; measureDuration: number; }
+interface TimingData {
+  bpm: number;
+  measureDuration: number;
+}
 
 interface SerializableLoopIoState {
   isRecording: boolean;
@@ -25,6 +28,7 @@ interface SerializableLoopIoState {
   timing: TimingData;
   groups: StateGroup[];
   recordings: StateRecording[];
+  externalAudioModules: ExternalAudioModule[];
 }
 
 type LoopIoNodeType = 'master' | 'recording' | 'group';

@@ -15,9 +15,4 @@ const Test = (props: WithLoopIo<TestProps>) => {
 
 const TestWithLoopio = withLoopio<TestProps>(Test); */
 
-ReactDOM.render(
-  (
-    <App />
-  ),
-  document.getElementById('app'),
-);
+ReactDOM.render(<App />, document.getElementById('app'));

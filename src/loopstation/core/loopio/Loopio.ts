@@ -7,6 +7,11 @@ import ChnlGroup from '../chnl-group/ChnlGroup';
 import { EffectsCollection } from '../effect-units-collection';
 import Chnl from '../chnl/Chnl';
 import EffectUnit from '../effect-unit/EffectUnit';
+import AudioBufferRecorder from '../audio-buffer-recorder/AudioBufferRecorder';
+import {
+  listExternalAudioModules,
+  createExternalAudioModule,
+} from '../external-audio-modules/ExternalAudioModule';
 
 interface SavedRecording {
   groupId: string;
@@ -35,10 +40,12 @@ interface LoopIoState {
   recordings: Map<string, SavedRecording>;
   isRecording: boolean;
   timing: TimingData;
+  externalAudioModules: ExternalAudioModule[];
 }
 
 export default class Loopio {
   private audioLooper: AudioLooper;
+  private recorder: AudioBufferRecorder;
   private master: Master;
   private audioCtx: AudioContext;
   private state: LoopIoState;
@@ -46,7 +53,8 @@ export default class Loopio {
 
   constructor() {
     this.audioCtx = new AudioContext();
-    this.audioLooper = new AudioLooper(this.audioCtx);
+    this.recorder = new AudioBufferRecorder(this.audioCtx);
+    this.audioLooper = new AudioLooper(this.audioCtx, this.recorder);
     this.master = new Master(this.audioCtx);
 
     this.state = {
@@ -58,12 +66,16 @@ export default class Loopio {
         bpm: 0,
         measureDuration: 0,
       },
+      externalAudioModules: Array(100).fill(null), // Needed because of strange MobX bug, fix ASAP
     };
 
     this.setup();
   }
 
-  static getEffectOfChnl(chnl: Chnl, effectName: keyof EffectsCollection): EffectUnit {
+  static getEffectOfChnl(
+    chnl: Chnl,
+    effectName: keyof EffectsCollection,
+  ): EffectUnit {
     const effect = chnl.getEffect(effectName);
     if (!effect) {
       throw new Error(`Effect ${effectName} does not exist on Chnl.`);
@@ -71,20 +83,30 @@ export default class Loopio {
     return effect;
   }
 
-  private setup() {
+  private async setup() {
     this.audioLooper.addEventListener('recordingstart', () => {
       this.setIsRecording(true);
     });
 
-    this.audioLooper.addEventListener('timingdataavailable', (t: TimingData) => {
-      this.setTimingData(t);
-    });
+    this.audioLooper.addEventListener(
+      'timingdataavailable',
+      (t: TimingData) => {
+        this.setTimingData(t);
+      },
+    );
 
-    this.audioLooper.addEventListener('recordingstop', (buffer: AudioBufferSourceNode) => {
-      this.setIsRecording(false);
-      const newBufferChnl = new BufferChnl(this.audioCtx, buffer);
-      this.onNewRecording(newBufferChnl);
-    });
+    this.audioLooper.addEventListener(
+      'recordingstop',
+      (buffer: AudioBufferSourceNode) => {
+        this.setIsRecording(false);
+        const newBufferChnl = new BufferChnl(this.audioCtx, buffer);
+        this.onNewRecording(newBufferChnl);
+      },
+    );
+
+    const externalAudioModules = await listExternalAudioModules();
+    console.log({ externalAudioModules });
+    this.setExternalAudioModules(externalAudioModules);
   }
 
   /**
@@ -178,6 +200,10 @@ export default class Loopio {
   }
 
   /** All methods below modify the state DIRECTLY */
+  private setExternalAudioModules(externalAudioModules: ExternalAudioModule[]) {
+    this.state.externalAudioModules = externalAudioModules;
+    this.onStateChange();
+  }
 
   private setActiveGroup(id: string) {
     this.state.activeGroup = id;
@@ -231,7 +257,10 @@ export default class Loopio {
     this.setActiveGroup(id);
   }
 
-  public toggleEffect(nodeType: LoopIoNodeType, payload: ChangeEffectStatusParams) {
+  public toggleEffect(
+    nodeType: LoopIoNodeType,
+    payload: ChangeEffectStatusParams,
+  ) {
     const chnl = this.getChnlFromNode(nodeType, payload.id);
     const effect = Loopio.getEffectOfChnl(chnl, payload.effectName);
     const isEnabled = payload.isEnabled || effect.serialize().state.isEnabled;
@@ -245,7 +274,10 @@ export default class Loopio {
     this.onStateChange();
   }
 
-  public setEffectValue(nodeType: LoopIoNodeType, payload: SetEffectValueParams) {
+  public setEffectValue(
+    nodeType: LoopIoNodeType,
+    payload: SetEffectValueParams,
+  ) {
     const chnl = this.getChnlFromNode(nodeType, payload.id);
     const effect = Loopio.getEffectOfChnl(chnl, payload.effectName);
     effect.setValue(payload.effectValueName, payload.value);
@@ -291,12 +323,11 @@ export default class Loopio {
 
   public deleteGroup(groupId: string) {
     const group = this.requireGroupExists(groupId);
-    const recordingsInGroup: string[] = Array
-      .from(this.state.recordings)
+    const recordingsInGroup: string[] = Array.from(this.state.recordings)
       .filter(([, rec]) => rec.groupId === groupId)
       .map(([id]) => id);
 
-    recordingsInGroup.forEach((recToDelete) => {
+    recordingsInGroup.forEach(recToDelete => {
       this.deleteRecording(recToDelete);
     });
 
@@ -331,6 +362,7 @@ export default class Loopio {
           bufferChnl: recording.bufferChnl.serialize(),
         },
       })),
+      externalAudioModules: this.state.externalAudioModules,
     };
   }
 
@@ -341,12 +373,22 @@ export default class Loopio {
   public stateChange(cb: (s: SerializableLoopIoState) => void) {
     this.stateChangedCallbacks.push(cb);
     return () => {
-      this.stateChangedCallbacks = this.stateChangedCallbacks.filter(currCb => currCb !== cb);
+      this.stateChangedCallbacks = this.stateChangedCallbacks.filter(
+        currCb => currCb !== cb,
+      );
     };
   }
 
   public getClock() {
     // Can re-use clock of audioLooper
     return this.audioLooper.getClock();
+  }
+
+  public createExternalAudioModules(externalAudioModule: ExternalAudioModule) {
+    return createExternalAudioModule(
+      externalAudioModule,
+      this.audioCtx,
+      this.recorder.getExternalInput(),
+    );
   }
 }

@@ -5,12 +5,10 @@ import withAppState, { WithAppState } from '../../../app-state';
 
 import BottomBarPresentational from '../../presentational/BottomBar';
 
-interface Props {
-
-}
+interface Props {}
 
 const RecordingBar = (props: WithAppState<Props>) => {
-  const [currentMeasure, setCurrentMeasure]  = useState<number>(1);
+  const [currentMeasure, setCurrentMeasure] = useState<number>(1);
   const [wasSetup, setup] = useState<boolean>(false);
 
   const { loopioState, loopio, uiState } = props;
@@ -18,7 +16,7 @@ const RecordingBar = (props: WithAppState<Props>) => {
   useEffect(() => {
     if (!wasSetup) {
       setup(true);
-      window.addEventListener('keydown', (e) => {
+      window.addEventListener('keydown', e => {
         if (e.keyCode === 32) {
           loopio.toggleRecording({ numMeasures: currentMeasure });
         }
@@ -39,6 +37,9 @@ const RecordingBar = (props: WithAppState<Props>) => {
           onMeasureChange={setCurrentMeasure}
           onRecordingToggle={() => {
             loopio.toggleRecording({ numMeasures: currentMeasure });
+          }}
+          onOpenAudioModulesList={() => {
+            uiState.openExternalAudioModulesList();
           }}
         />
       )}
