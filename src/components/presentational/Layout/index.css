@@ -24,7 +24,7 @@
 
 .scrollContainer {
   position: fixed;
-  top: 0;
+  top: var(--barHeight);
   height: calc(100% - 1 * var(--barHeight));
   width: 100%;
   overflow: auto;
@@ -32,8 +32,8 @@
 }
 
 .scrollContainer::-webkit-scrollbar {
-  width: 0;  /* remove scrollbar space */
-  background: transparent;  /* optional: just make scrollbar invisible */
+  width: 0; /* remove scrollbar space */
+  background: transparent; /* optional: just make scrollbar invisible */
 }
 
 .sidePanel {

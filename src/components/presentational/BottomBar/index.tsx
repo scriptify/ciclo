@@ -2,7 +2,7 @@ import React, { ChangeEvent } from 'react';
 import classnames from 'classnames';
 import ProgressRing from '../ProgressRing';
 
-const volumeIcon = require('../../../img/volume.svg');
+const synthIcon = require('../../../img/synth.png');
 
 const {
   barContainer,
@@ -44,7 +44,7 @@ const BottomBar = ({
   return (
     <div className={barContainer}>
       <button className={toSpeakersBtn} onClick={onOpenAudioModulesList}>
-        <img src={volumeIcon} alt="Redirect mic input to speakers" />
+        <img src={synthIcon} alt="External Audio Modules (synths)" />
       </button>
       {!hideChangeMeasure && (
         <select
@@ -64,9 +64,9 @@ const BottomBar = ({
       >
         <ProgressRing
           progress={measureProgress ? measureProgress : 100}
-          radius={30}
-          stroke={5}
-          color="rgb(0, 69, 158)"
+          radius={27}
+          stroke={3}
+          color="#00B9FF"
         />
         {bpm !== 0 && <span>{bpm.toFixed()} BPM</span>}
       </button>

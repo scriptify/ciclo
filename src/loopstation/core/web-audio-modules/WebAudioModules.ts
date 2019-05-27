@@ -65,6 +65,8 @@ export async function createWam(
     closeBtn.addEventListener('click', () => {
       const wrapperElem = document.getElementById(`wrapper-${elemId}`);
       if (wrapperElem) wrapperElem.style.display = 'none';
+      wam.disconnect(audioCtx.destination);
+      console.log(wam);
     });
   }
 

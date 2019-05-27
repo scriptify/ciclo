@@ -1,11 +1,16 @@
 import React, { ReactNode, useState } from 'react';
 import classnames from 'classnames';
-import { DropTarget, DropTargetConnector, DropTargetMonitor, ConnectDropTarget } from 'react-dnd';
+import {
+  DropTarget,
+  DropTargetConnector,
+  DropTargetMonitor,
+  ConnectDropTarget,
+} from 'react-dnd';
 
-const trashIcon = require('../../../img/trash.svg');
-const muteIcon = require('../../../img/mute.svg');
-const unmuteIcon = require('../../../img/volume.svg');
-const effectsIcon = require('../../../img/effects.svg');
+const trashIcon = require('../../../img/x-icon.png');
+const muteIcon = require('../../../img/mute.png');
+const unmuteIcon = require('../../../img/volume.png');
+const effectsIcon = require('../../../img/effects.png');
 
 const {
   groupContainer,
@@ -53,34 +58,36 @@ const Group = ({
 
   return connectDropTarget(
     <div className={groupContainer} onClick={onSelect}>
-      <header className={classnames(groupHeader, { [isSelectedClass]: isSelected })}>
+      <header
+        className={classnames(groupHeader, { [isSelectedClass]: isSelected })}
+      >
         <div className={nameRow}>
-          {
-            isEditingName ? (
-              <input
-                type="string"
-                className={groupName}
-                value={name}
-                onChange={(e) => {
-                  const { value } = e.target;
-                  onNameChange(value);
-                }}
-                onBlur={() => {
-                  toggleEditName(false);
-                }}
-              />
-            ) : (
-              <h2
-                className={groupName}
-                onClick={() => {
-                  toggleEditName(true);
-                }}
-              >{name}</h2>
-            )
-          }
+          {isEditingName ? (
+            <input
+              type="string"
+              className={groupName}
+              value={name}
+              onChange={e => {
+                const { value } = e.target;
+                onNameChange(value);
+              }}
+              onBlur={() => {
+                toggleEditName(false);
+              }}
+            />
+          ) : (
+            <h2
+              className={groupName}
+              onClick={() => {
+                toggleEditName(true);
+              }}
+            >
+              {name}
+            </h2>
+          )}
           <button
             className={deleteGroupBtn}
-            onClick={(e) => {
+            onClick={e => {
               // Do not fire onSelect event
               e.stopPropagation();
               onDelete();
@@ -91,22 +98,18 @@ const Group = ({
         </div>
         <div className={groupActions}>
           <button className={groupAction} onClick={onMute}>
-            {
-              isMuted ? (
-                <img src={unmuteIcon} alt="Unmute group" />
-              ) : (
-                <img src={muteIcon} alt="Mute group" />
-              )
-            }
+            {isMuted ? (
+              <img src={unmuteIcon} alt="Unmute group" />
+            ) : (
+              <img src={muteIcon} alt="Mute group" />
+            )}
           </button>
           <button className={groupAction} onClick={onEditEffects}>
             <img src={effectsIcon} alt="Edit group effects" />
           </button>
         </div>
       </header>
-      <div className={phrasesContainer}>
-        {children}
-      </div>
+      <div className={phrasesContainer}>{children}</div>
     </div>,
   );
 };

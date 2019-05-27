@@ -10,6 +10,7 @@ import Groups from '../stateful/Groups';
 import EffectEditor from '../stateful/EffectEditor';
 import ExternalAudioModules from '../stateful/ExternalAudioModules';
 import { BottomBarContainer, ScrollContainer } from '../presentational/Layout';
+import TopBar from '../stateful/TopBar';
 
 const { app } = require('./index.css');
 
@@ -18,6 +19,7 @@ interface Props {}
 const App = (p: Props) => {
   return (
     <div className={app}>
+      <TopBar />
       <ScrollContainer>
         <Groups />
       </ScrollContainer>

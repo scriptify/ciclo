@@ -1,11 +1,20 @@
-export function audioDataToBuffer(audioCtx: AudioContext, data: Blob[]): Promise<AudioBuffer> {
-  return new Promise((resolve) => {
+export function audioDataToBuffer(
+  audioCtx: AudioContext,
+  data: Blob[],
+): Promise<AudioBuffer> {
+  return new Promise(resolve => {
     const blob = new Blob(data, { type: 'audio/ogg; codecs=opus' });
     const fileReader = new FileReader();
     fileReader.addEventListener('loadend', async () => {
       if (!fileReader.result) return;
-      const decodedData = await audioCtx.decodeAudioData(fileReader.result as ArrayBuffer);
-      resolve(decodedData);
+      try {
+        const decodedData = await audioCtx.decodeAudioData(
+          fileReader.result as ArrayBuffer,
+        );
+        resolve(decodedData);
+      } catch (e) {
+        console.log('err', e);
+      }
     });
     fileReader.readAsArrayBuffer(blob);
   });
@@ -40,13 +49,17 @@ function ceilOrFloor(value: number, from: number) {
 // it will not be enlonged but shortened
 export const PHRASE_MIN_LONGER_THAN_FIRST_SAMPLE = 0.05;
 
-export function getResizeFactor(firstSampleLength: number, newSampleLength: number) {
+export function getResizeFactor(
+  firstSampleLength: number,
+  newSampleLength: number,
+) {
   return (
-    (
-      ceilOrFloor(newSampleLength / firstSampleLength, PHRASE_MIN_LONGER_THAN_FIRST_SAMPLE)
-      * firstSampleLength
-    )
-    / newSampleLength
+    (ceilOrFloor(
+      newSampleLength / firstSampleLength,
+      PHRASE_MIN_LONGER_THAN_FIRST_SAMPLE,
+    ) *
+      firstSampleLength) /
+    newSampleLength
   );
 }
 
@@ -71,12 +84,21 @@ export function resizeAudioBuffer({
     audioBuffer.sampleRate,
   );
 
-  const setOffset = (mode === 'after' || newLength < audioBuffer.sampleRate)
-    ? 0
-    :newLength - audioBuffer.length;
+  const setOffset =
+    mode === 'after' || newLength < audioBuffer.sampleRate
+      ? 0
+      : newLength - audioBuffer.length;
 
-  for (let channel = 0; channel < newAudioBuffer.numberOfChannels; channel += 1) {
-    newAudioBuffer.copyToChannel(audioBuffer.getChannelData(channel), channel, setOffset);
+  for (
+    let channel = 0;
+    channel < newAudioBuffer.numberOfChannels;
+    channel += 1
+  ) {
+    newAudioBuffer.copyToChannel(
+      audioBuffer.getChannelData(channel),
+      channel,
+      setOffset,
+    );
   }
 
   return newAudioBuffer;
@@ -88,16 +110,28 @@ interface RepeatBufferParams {
   times: number;
 }
 
-export function repeatBuffer({ audioBuffer, audioCtx, times }: RepeatBufferParams) {
+export function repeatBuffer({
+  audioBuffer,
+  audioCtx,
+  times,
+}: RepeatBufferParams) {
   const newBuffer = audioCtx.createBuffer(
     audioBuffer.numberOfChannels,
     audioBuffer.length * times,
     audioBuffer.sampleRate,
   );
 
-  for (let currOffset = 0; currOffset < newBuffer.length; currOffset += audioBuffer.length) {
+  for (
+    let currOffset = 0;
+    currOffset < newBuffer.length;
+    currOffset += audioBuffer.length
+  ) {
     for (let channel = 0; channel < newBuffer.numberOfChannels; channel += 1) {
-      newBuffer.copyToChannel(audioBuffer.getChannelData(channel), channel, currOffset);
+      newBuffer.copyToChannel(
+        audioBuffer.getChannelData(channel),
+        channel,
+        currOffset,
+      );
     }
   }
   return newBuffer;

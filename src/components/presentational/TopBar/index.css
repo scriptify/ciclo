@@ -1,4 +1,5 @@
 .barContainer {
+  box-sizing: border-box;
   width: 100%;
   display: flex;
   align-items: center;
@@ -6,28 +7,11 @@
   padding-left: 5%;
   padding-right: 5%;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.445);
+  background: #111215;
+  height: 12vh;
 }
 
-.recordBtn,
-.effectsBtn {
-  background: none;
-  border: none;
-  height: 7vh;
-}
-
-.recordBtn {
-  background: rgb(0, 69, 158);
-  box-shadow: 0 0 15px rgb(0, 69, 158);
-  width: 7vh;
-  border-radius: 50%;
-}
-
-.recordBtn:hover,
-.recordBtn:focus,
-.recordBtn:active {
-  box-shadow: 0 0 25px rgb(0, 69, 158);
-}
-
-.effectsBtn img {
+.logo img {
+  height: 6vh;
   width: auto;
 }

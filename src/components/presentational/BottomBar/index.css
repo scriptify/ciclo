@@ -4,6 +4,7 @@
   align-items: center;
   justify-content: center;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.445);
+  background: #111215;
 }
 
 .barContainer > * {
@@ -19,8 +20,8 @@
 
 .recordBtn {
   cursor: pointer;
-  color: rgb(150, 150, 150);
-  font-weight: bold;
+  color: #fff;
+  font-family: 'Raleway', sans-serif;
 }
 
 .recordBtn:hover,
@@ -45,23 +46,29 @@
 
 .measure,
 .measure option {
-  background-color: rgba(0, 0, 0, 0.76);
+  background-color: rgba(0, 0, 0, 0);
   color: #fff;
+}
+
+.measure option {
+  background-color: rgba(0, 0, 0, 0.7);
 }
 
 .toSpeakersBtn img {
   width: auto;
-  height: 4vh;
+  height: 10vh;
 }
 
 .addGroupBtn {
-  height: 3vh;
-  width: 3vh;
+  height: 5vh;
+  width: 5vh;
   display: flex;
   justify-content: center;
-  font-size: 2vh;
+  align-items: center;
+  font-size: 1.5em;
   margin-right: 0;
   border-radius: 50%;
-  border: solid 1px rgba(255, 255, 255, 0.4);
-  color: rgba(255, 255, 255, 0.4);
+  border: solid 2px #fff;
+  color: #fff;
+  background: #0c0a0a;
 }

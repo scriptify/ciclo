@@ -7,9 +7,9 @@
 .groupHeader {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.329);
   border-radius: 10px;
-  padding: 10px;
   transition: box-shadow 0.3s, color 0.3s;
   cursor: pointer;
+  border: solid 1px rgba(255, 255, 255, 0.16);
 }
 
 .groupHeader:hover,
@@ -22,6 +22,8 @@
 .nameRow {
   display: flex;
   align-items: center;
+  padding: 1em;
+  padding-bottom: 0;
 }
 
 .groupName {
@@ -32,11 +34,10 @@
   text-align: left;
   background: none;
   border: none;
-  color: inherit;
+  color: #fff;
 }
 
 .deleteGroupBtn {
-  width: 15%;
   height: 100%;
   background: none;
   border: none;
@@ -46,8 +47,12 @@
 }
 
 .deleteGroupBtn img {
-  height: 30px;
+  height: 14px;
   width: auto;
+}
+
+.groupAction img {
+  height: 40%;
 }
 
 .groupHeader:hover img,
@@ -58,16 +63,15 @@
 
 .groupActions {
   display: flex;
-  height: 80%;
 }
 
 .groupAction {
   width: 50%;
-  height: 10vh;
+  height: 15vh;
   border: none;
   background: none;
 }
 
 .isSelected {
-  background: #000;
+  background: none;
 }

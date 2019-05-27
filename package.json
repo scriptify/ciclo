@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "cross-env BABEL_ENV=browser webpack-dev-server --config config/webpack/browser.dev.js",
-    "build": "cross-env BABEL_ENV=browser webpack --config config/webpack/browser.prod.js"
+    "build": "cross-env BABEL_ENV=browser webpack --config config/webpack/browser.prod.js",
+    "deploy": "surge ./build ciclo.surge.sh"
   },
   "keywords": [],
   "author": "",

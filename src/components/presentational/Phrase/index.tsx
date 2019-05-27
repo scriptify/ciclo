@@ -3,10 +3,10 @@ import classnames from 'classnames';
 import { DragSource, DragSourceConnector, ConnectDragSource } from 'react-dnd';
 import { DragDropMonitor } from 'dnd-core';
 
-const effectsIcon = require('../../../img/effects.svg');
-const trashIcon = require('../../../img/trash.svg');
-const playIcon = require('../../../img/play.svg');
-const pauseIcon = require('../../../img/pause.svg');
+const effectsIcon = require('../../../img/effects.png');
+const trashIcon = require('../../../img/x-icon.png');
+const playIcon = require('../../../img/play.png');
+const pauseIcon = require('../../../img/pause.png');
 
 let onGroupChangeCb = (id: string) => {};
 
@@ -17,6 +17,7 @@ const {
   phraseActions,
   phraseAction,
   isMuted: isMutedClass,
+  delete: deleteClass,
 } = require('./index.css');
 
 interface Props {
@@ -43,12 +44,15 @@ const dragHandler = {
   endDrag: (props: any, monitor: DragDropMonitor) => {
     const res = monitor.getDropResult();
     if (!res || !res.id) return;
-    const { id } =  res;
+    const { id } = res;
     onGroupChangeCb(id);
   },
 };
 
-function dragStateCollect(connect: DragSourceConnector, monitor: DragDropMonitor) {
+function dragStateCollect(
+  connect: DragSourceConnector,
+  monitor: DragDropMonitor,
+) {
   return {
     connectDragSource: connect.dragSource(),
     isDragging: monitor.isDragging(),
@@ -71,48 +75,49 @@ const Phrase = ({
   return connectDragSource(
     <div className={phraseContainer}>
       <div className={phraseActions}>
-        <button className={phraseAction} onClick={onDelete}>
-          <img src={trashIcon} alt="Delete phrase" />
-        </button>
         <button className={phraseAction} onClick={onEditEffects}>
           <img src={effectsIcon} alt="Edit effects" />
+        </button>
+        <button
+          className={classnames(phraseAction, deleteClass)}
+          onClick={onDelete}
+        >
+          <img src={trashIcon} alt="Delete phrase" />
         </button>
       </div>
       <div
         className={classnames(togglePlayback, { [isMutedClass]: isMuted })}
         onClick={onMute}
       >
-        {
-          isMuted ? (
-            <img src={playIcon} alt="Start playback" />
-          ) : (
-            <img src={pauseIcon} alt="Pause playback" />
-          )
-        }
-      </div>
-      {
-        isEditingName ? (
-          <input
-            type="string"
-            className={phraseName}
-            value={name}
-            onChange={(e) => {
-              const { value } = e.target;
-              onNameChange(value);
-            }}
-            onBlur={() => {
-              toggleEditName(false);
-            }}
-          />
+        {isMuted ? (
+          <img src={playIcon} alt="Start playback" />
         ) : (
-          <div
-            className={phraseName}
-            onClick={() => {
-              toggleEditName(true);
-            }}
-          >{name}</div>
-        )
-      }
+          <img src={pauseIcon} alt="Pause playback" />
+        )}
+      </div>
+      {isEditingName ? (
+        <input
+          type="string"
+          className={phraseName}
+          value={name}
+          onChange={e => {
+            const { value } = e.target;
+            onNameChange(value);
+          }}
+          onBlur={() => {
+            toggleEditName(false);
+          }}
+        />
+      ) : (
+        <div
+          className={phraseName}
+          onClick={() => {
+            toggleEditName(true);
+          }}
+        >
+          {name}
+        </div>
+      )}
     </div>,
   );
 };

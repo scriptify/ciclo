@@ -13,9 +13,11 @@ export default class AudioBufferRecorder {
   private audioCtx: AudioContext;
   private mediaRecorder!: MediaRecorder;
   private externalInput: MediaStreamAudioDestinationNode;
+  private streamSource?: MediaStreamAudioSourceNode;
 
   constructor(audioCtx: AudioContext) {
     this.audioCtx = audioCtx;
+
     this.externalInput = this.audioCtx.createMediaStreamDestination();
 
     this.setup();
@@ -26,11 +28,9 @@ export default class AudioBufferRecorder {
       AudioBufferRecorder.CONSTRAINTS,
     );
 
-    const streamSource = this.audioCtx.createMediaStreamSource(stream);
+    this.streamSource = this.audioCtx.createMediaStreamSource(stream);
 
-    streamSource.connect(this.externalInput);
-
-    const mediaRecorder = new MediaRecorder(this.externalInput.stream);
+    const mediaRecorder = new MediaRecorder(this.streamSource.mediaStream);
     mediaRecorder.ondataavailable = e => {
       this.data.push(e.data);
     };
@@ -38,12 +38,26 @@ export default class AudioBufferRecorder {
   }
 
   public getExternalInput() {
+    // Create new media recorder with external input is needed
+    //     and something signal producing connects to it
+    // Because if connected immediately, weird bugs occur
+    if (this.streamSource) {
+      this.streamSource.connect(this.externalInput);
+
+      const mediaRecorder = new MediaRecorder(this.externalInput.stream);
+      mediaRecorder.ondataavailable = e => {
+        this.data.push(e.data);
+      };
+      this.mediaRecorder = mediaRecorder;
+    }
+
     return this.externalInput;
   }
 
   stop(): Promise<AudioBuffer> {
     return new Promise(resolve => {
       this.mediaRecorder.onstop = async () => {
+        console.log('data', this.data[0].size);
         const bufferSource = await audioDataToBuffer(this.audioCtx, this.data);
         resolve(bufferSource);
         this.data = [];

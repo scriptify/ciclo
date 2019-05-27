@@ -6,7 +6,7 @@ const {
   externalAudioModulesList,
 } = require('./index.css');
 
-const closeIcon = require('../../../img/close.png');
+const closeIcon = require('../../../img/x-icon.png');
 
 interface Props {
   onChoose: (e: ExternalAudioModule) => void;
