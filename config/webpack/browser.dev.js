@@ -6,7 +6,11 @@ const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin');
 const createCommonConfig = require('./browser.common');
 
 const {
-  PATHS, loadCSS, createAnalyzer, createLinter, getAppName
+  PATHS,
+  loadCSS,
+  createAnalyzer,
+  createLinter,
+  getAppName,
 } = require('./util.js');
 
 const DEV_CONFIG = {
@@ -17,23 +21,23 @@ const DEV_CONFIG = {
     historyApiFallback: true,
     quiet: true,
     hot: true,
-    open: true
+    open: true,
   },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
     new WebpackNotifierPlugin({
       excludeWarnings: true,
-      title: getAppName()
+      title: getAppName(),
     }),
     new FriendlyErrorsWebpackPlugin(),
-    createAnalyzer(true)
+    createAnalyzer(true),
   ],
   module: {
     rules: [
-      createLinter(true),
-      loadCSS({ use: ['style-loader'] })
-    ]
-  }
+      // createLinter(true),
+      loadCSS({ use: ['style-loader'] }),
+    ],
+  },
 };
 
 const CONF_TO_EXPORT = merge(createCommonConfig(), DEV_CONFIG);

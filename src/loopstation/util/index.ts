@@ -67,7 +67,7 @@ interface ResizeAudioBufferParams {
   audioCtx: AudioContext;
   audioBuffer: AudioBuffer;
   newLength: number;
-  mode?: string;
+  mode?: 'after' | 'before';
 }
 
 export function resizeAudioBuffer({

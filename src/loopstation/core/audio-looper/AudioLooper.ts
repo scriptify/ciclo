@@ -8,6 +8,7 @@ import {
   fadeAudioBuffer,
   PHRASE_MIN_LONGER_THAN_FIRST_SAMPLE,
 } from '../../util';
+import AudioLooperVisualization from './AudioLooperVisualization';
 
 interface StopRecordingParams {
   numMeasures?: number;
@@ -18,19 +19,20 @@ export default class AudioLooper extends EventEmitter {
 
   private audioCtx: AudioContext;
   private recorder: AudioBufferRecorder;
+  private visualizer: AudioLooperVisualization;
   private measureDuration: number = 0;
-  private recordingOffset: number = 0;
   private bpm: number = 0;
   private clock: MeasureTimer | null = null;
   private audioBuffers: AudioBufferSourceNode[] = [];
 
   private firstTrackStartedAt: number = 0;
-  // private onMeasureStart = () => {};
 
   constructor(audioCtx: AudioContext, recorder?: AudioBufferRecorder) {
     super();
     this.audioCtx = audioCtx;
     this.recorder = recorder || new AudioBufferRecorder(this.audioCtx);
+    this.visualizer = new AudioLooperVisualization(this);
+    this.visualizer.start();
   }
 
   private get currentMeasureOffset() {
@@ -54,8 +56,6 @@ export default class AudioLooper extends EventEmitter {
         this.recordingOffset = 0;
       } */
       await this.recorder.start();
-      this.recordingOffset = 0;
-      console.log(this.currentMeasureOffset);
     };
     return record();
     /* if (this.bpm === null)
@@ -86,10 +86,11 @@ export default class AudioLooper extends EventEmitter {
   }
 
   private async stopRecordingImmediate({ numMeasures = 1 } = {}) {
+    console.time('start rec method');
+
     let newBuffer = await this.recorder.stop();
 
     const isFirstTrack = !this.measureDuration;
-    console.time('start rec method');
     if (isFirstTrack) {
       // First track
       this.measureDuration = newBuffer.duration * numMeasures ** -1;
@@ -120,31 +121,19 @@ export default class AudioLooper extends EventEmitter {
 
     fadeAudioBuffer(newBuffer);
 
-    // First append empty samples in the beginning according to when the recording was started
-    const newSizeWithoutStartOffset = this.recordingOffset + newBuffer.duration;
-    const newSizeFactor = newSizeWithoutStartOffset / newBuffer.duration;
-    const newSizeWithoutStartOffsetSamples = Math.floor(
-      newBuffer.length * newSizeFactor,
-    );
+    // Fill buffer to fit the length of one measure
+    // Then start it with an offset of the original length
+    const bufferOrigDuration = newBuffer.duration;
+    const bufferNewLength = this.measureDuration * newBuffer.sampleRate;
+
     newBuffer = isFirstTrack
       ? newBuffer
       : resizeAudioBuffer({
-        audioCtx: this.audioCtx,
-        audioBuffer: newBuffer,
-        newLength: newSizeWithoutStartOffsetSamples,
-        mode: 'before',
-      });
-
-    const resizeFactor = getResizeFactor(
-      this.measureDuration,
-      newBuffer.duration,
-    );
-
-    newBuffer = resizeAudioBuffer({
-      audioCtx: this.audioCtx,
-      audioBuffer: newBuffer,
-      newLength: Math.floor(newBuffer.length * resizeFactor),
-    });
+          audioCtx: this.audioCtx,
+          mode: 'after',
+          audioBuffer: newBuffer,
+          newLength: bufferNewLength,
+        });
 
     const bufferNode = this.audioCtx.createBufferSource();
     bufferNode.loop = true;
@@ -152,44 +141,14 @@ export default class AudioLooper extends EventEmitter {
 
     this.audioBuffers.push(bufferNode);
 
-    /* const startOffset = this.audioCtx.currentTime +
-      (this.measureDuration - this.currentMeasureOffset); */
+    const startAt = 0;
+    const offset = bufferOrigDuration;
 
-    /* const timeDiff = this.measureDuration - this.currentMeasureOffset;
-    let startOffset = this.currentMeasureOffset;
-    let startAt = 0;
+    console.log({
+      bufferOrigDuration,
+      newDuration: newBuffer.duration,
+    });
 
-    console.log(this.currentMeasureOffset, { timeDiff });
-
-    if (timeDiff <= 0.1) {
-      startOffset = 0;
-      startAt = this.audioCtx.currentTime +
-        (this.measureDuration - this.currentMeasureOffset);
-    }
-
-    */
-
-    /* const offset = this.currentMeasureOffset +
-      (
-        ((newBuffer.duration / this.measureDuration) - 1) * this.measureDuration
-      ); */
-
-    // const offset = this.currentMeasureOffset;
-    let startAt = this.measureDuration - this.currentMeasureOffset;
-    let offset = 0;
-
-    const isOffsetOnlyMinimal =
-      this.currentMeasureOffset / this.measureDuration <=
-      PHRASE_MIN_LONGER_THAN_FIRST_SAMPLE;
-
-    // If phrase is just slightly longer than the first phase, it was shortened
-    // To the length of the first phase and can thus be played immediatly
-    // with the offset set to the difference
-    if (isOffsetOnlyMinimal) {
-      startAt = 0;
-      offset = this.currentMeasureOffset;
-    }
-    console.log({ startAt, offset });
     bufferNode.start(this.audioCtx.currentTime + startAt, offset);
     this.emit('recordingstop', bufferNode);
     console.timeEnd('start rec method');
@@ -197,5 +156,14 @@ export default class AudioLooper extends EventEmitter {
 
   public getClock() {
     return this.clock;
+  }
+
+  /** All data needed by AudioLooperVisualization */
+  public getVisualizationData() {
+    return {
+      audioBuffers: this.audioBuffers,
+      measureDuration: this.measureDuration,
+      currentMeasureOffset: this.currentMeasureOffset,
+    };
   }
 }

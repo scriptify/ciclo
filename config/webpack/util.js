@@ -5,7 +5,7 @@ const path = require('path');
 const PATHS = {
   src: path.resolve(__dirname, '../../src'),
   build: path.resolve(__dirname, '../../build'),
-  assets: path.resolve(__dirname, '../../assets')
+  assets: path.resolve(__dirname, '../../assets'),
 };
 
 function loadCSS({ use = [] }) {
@@ -17,19 +17,17 @@ function loadCSS({ use = [] }) {
       {
         loader: 'css-loader',
         options: {
-          modules: true
-        }
+          modules: true,
+        },
       },
       {
         loader: 'postcss-loader',
         options: {
           ident: 'postcss',
-          plugins: () => [
-            postcssPresetEnv()
-          ]
-        }
-      }
-    ]
+          plugins: () => [postcssPresetEnv()],
+        },
+      },
+    ],
   };
 }
 
@@ -37,7 +35,7 @@ function createAnalyzer(dev = true) {
   return new BundleAnalyzerPlugin({
     analyzerMode: dev ? 'server' : 'static',
     openAnalyzer: !dev,
-    reportFilename: path.join(PATHS.build, '/reports/bundle-analysis.html')
+    reportFilename: path.join(PATHS.build, '/reports/bundle-analysis.html'),
   });
 }
 
@@ -51,11 +49,11 @@ function createLinter({ configFile, tsConfigFile }) {
         emitError: true,
         failOnHint: true,
         configFile,
-        tsConfigFile
-      }
+        tsConfigFile,
+      },
     },
     enforce: 'pre',
-    include: [PATHS.src]
+    include: [PATHS.src],
   };
 }
 
