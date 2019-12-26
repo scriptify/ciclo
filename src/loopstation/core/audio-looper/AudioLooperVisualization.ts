@@ -1,15 +1,21 @@
 import AudioLooper from './AudioLooper';
+import { SavedAudioBufferData } from './types';
 
 interface AudioBufferVisualizationData {
-  audioBuffers: AudioBuffer[];
+  audioBuffers: SavedAudioBufferData[];
   percentualProgress: number;
+}
+
+function getRandomColor() {
+  const ranNum = () => 255 * Math.random();
+  return `rgba(${ranNum()}, ${ranNum()}, ${ranNum()}, 0.5)`;
 }
 
 /**
  * Visualize multiple audio buffers
  */
 class AudioBufferVisualization {
-  private availableColors: string[] = ['#000', 'blue', 'red'];
+  private availableColors: string[];
   private canvas!: HTMLCanvasElement;
   private visualizationData: AudioBufferVisualizationData;
 
@@ -18,6 +24,9 @@ class AudioBufferVisualization {
       audioBuffers: [],
       percentualProgress: 0,
     };
+    this.availableColors = Array(100)
+      .fill(true)
+      .map(getRandomColor);
     this.setup();
   }
 
@@ -47,7 +56,9 @@ class AudioBufferVisualization {
     if (!context) return;
 
     this.visualizationData.audioBuffers.forEach((buffer, i) => {
-      let data = buffer.getChannelData(0);
+      const audioBufferData = buffer.audioBuffer.buffer;
+      if (!audioBufferData) return;
+      let data = audioBufferData.getChannelData(0);
       context.fillStyle = this.availableColors[i];
       for (let i = 0; i < this.canvas.width; i++) {
         let max = -Infinity;
@@ -112,9 +123,7 @@ export default class AudioLooperVisualization {
     } = this.audioLooper.getVisualizationData();
 
     this.audioBufferVisualization.update({
-      audioBuffers: audioBuffers
-        .map(buffer => buffer.buffer)
-        .filter(buffer => buffer) as AudioBuffer[],
+      audioBuffers,
       percentualProgress: currentMeasureOffset / measureDuration,
     });
 

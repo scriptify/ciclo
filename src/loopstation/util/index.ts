@@ -67,14 +67,14 @@ interface ResizeAudioBufferParams {
   audioCtx: AudioContext;
   audioBuffer: AudioBuffer;
   newLength: number;
-  mode?: 'after' | 'before';
+  offset?: number;
 }
 
 export function resizeAudioBuffer({
   audioCtx,
   audioBuffer,
   newLength,
-  mode = 'after',
+  offset = 0,
 }: ResizeAudioBufferParams) {
   if (audioBuffer.length === newLength) return audioBuffer;
 
@@ -84,11 +84,6 @@ export function resizeAudioBuffer({
     audioBuffer.sampleRate,
   );
 
-  const setOffset =
-    mode === 'after' || newLength < audioBuffer.sampleRate
-      ? 0
-      : newLength - audioBuffer.length;
-
   for (
     let channel = 0;
     channel < newAudioBuffer.numberOfChannels;
@@ -97,7 +92,7 @@ export function resizeAudioBuffer({
     newAudioBuffer.copyToChannel(
       audioBuffer.getChannelData(channel),
       channel,
-      setOffset,
+      offset,
     );
   }
 

@@ -9,6 +9,7 @@ import {
   PHRASE_MIN_LONGER_THAN_FIRST_SAMPLE,
 } from '../../util';
 import AudioLooperVisualization from './AudioLooperVisualization';
+import { SavedAudioBufferData } from './types';
 
 interface StopRecordingParams {
   numMeasures?: number;
@@ -19,11 +20,11 @@ export default class AudioLooper extends EventEmitter {
 
   private audioCtx: AudioContext;
   private recorder: AudioBufferRecorder;
-  private visualizer: AudioLooperVisualization;
+  private visualizer?: AudioLooperVisualization;
   private measureDuration: number = 0;
   private bpm: number = 0;
   private clock: MeasureTimer | null = null;
-  private audioBuffers: AudioBufferSourceNode[] = [];
+  private audioBuffers: SavedAudioBufferData[] = [];
 
   private firstTrackStartedAt: number = 0;
 
@@ -31,8 +32,8 @@ export default class AudioLooper extends EventEmitter {
     super();
     this.audioCtx = audioCtx;
     this.recorder = recorder || new AudioBufferRecorder(this.audioCtx);
-    this.visualizer = new AudioLooperVisualization(this);
-    this.visualizer.start();
+    // this.visualizer = new AudioLooperVisualization(this);
+    // this.visualizer.start();
   }
 
   private get currentMeasureOffset() {
@@ -86,9 +87,9 @@ export default class AudioLooper extends EventEmitter {
   }
 
   private async stopRecordingImmediate({ numMeasures = 1 } = {}) {
-    console.time('start rec method');
-
+    console.time('rectime');
     let newBuffer = await this.recorder.stop();
+    fadeAudioBuffer(newBuffer);
 
     const isFirstTrack = !this.measureDuration;
     if (isFirstTrack) {
@@ -96,7 +97,6 @@ export default class AudioLooper extends EventEmitter {
       this.measureDuration = newBuffer.duration * numMeasures ** -1;
       this.bpm = (AudioLooper.MEASURE * 60) / this.measureDuration;
 
-      this.firstTrackStartedAt = this.audioCtx.currentTime;
       this.clock = new MeasureTimer({
         bpm: this.bpm,
         measure: AudioLooper.MEASURE,
@@ -117,41 +117,45 @@ export default class AudioLooper extends EventEmitter {
           times: REPEAT_TIMES,
         });
       }
+      this.firstTrackStartedAt = this.audioCtx.currentTime;
     }
-
-    fadeAudioBuffer(newBuffer);
 
     // Fill buffer to fit the length of one measure
     // Then start it with an offset of the original length
     const bufferOrigDuration = newBuffer.duration;
-    const bufferNewLength = this.measureDuration * newBuffer.sampleRate;
+    const newDurationInSeconds =
+      Math.ceil(bufferOrigDuration / this.measureDuration) *
+      this.measureDuration;
+    const bufferNewLength = newDurationInSeconds * newBuffer.sampleRate;
 
     newBuffer = isFirstTrack
       ? newBuffer
       : resizeAudioBuffer({
           audioCtx: this.audioCtx,
-          mode: 'after',
+          offset: 0,
           audioBuffer: newBuffer,
           newLength: bufferNewLength,
         });
 
     const bufferNode = this.audioCtx.createBufferSource();
-    bufferNode.loop = true;
     bufferNode.buffer = newBuffer;
-
-    this.audioBuffers.push(bufferNode);
+    bufferNode.loop = true;
 
     const startAt = 0;
-    const offset = bufferOrigDuration;
-
-    console.log({
-      bufferOrigDuration,
-      newDuration: newBuffer.duration,
-    });
+    const crazyValueToAddWhoKnowsWhy = 0.19;
+    console.log('val-to-add', crazyValueToAddWhoKnowsWhy);
+    const offset = isFirstTrack
+      ? 0
+      : bufferOrigDuration + crazyValueToAddWhoKnowsWhy;
 
     bufferNode.start(this.audioCtx.currentTime + startAt, offset);
+    this.audioBuffers.push({
+      offset,
+      audioBuffer: bufferNode,
+      startedAt: startAt,
+    });
     this.emit('recordingstop', bufferNode);
-    console.timeEnd('start rec method');
+    console.timeEnd('rectime');
   }
 
   public getClock() {
