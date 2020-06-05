@@ -14,6 +14,11 @@ import {
 } from '../external-audio-modules/ExternalAudioModule';
 import { fileToAudioBuffer } from '../../util';
 
+interface AddAudioFileParams {
+  file: File;
+  numMeasures?: number;
+}
+
 interface SavedRecording {
   groupId: string;
   bufferChnl: BufferChnl;
@@ -347,9 +352,9 @@ export default class Loopio {
    * User can add an audio file
    * directly to the loopstation
    */
-  public async addAudioFile(file: File) {
-    const audioBuffer = await fileToAudioBuffer(file, this.audioCtx);
-    this.audioLooper.addAudioBuffer(audioBuffer);
+  public async addAudioFile({ file, numMeasures }: AddAudioFileParams) {
+    const buffer = await fileToAudioBuffer(file, this.audioCtx);
+    this.audioLooper.addAudioBuffer({ buffer, numMeasures });
   }
 
   public getMaster(): Master {

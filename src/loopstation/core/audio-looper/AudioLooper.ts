@@ -11,6 +11,11 @@ import {
 import AudioLooperVisualization from './AudioLooperVisualization';
 import { SavedAudioBufferData } from './types';
 
+interface AddAudioBufferParams {
+  buffer: AudioBuffer;
+  numMeasures?: number;
+}
+
 interface StopRecordingParams {
   numMeasures?: number;
 }
@@ -94,8 +99,8 @@ export default class AudioLooper extends EventEmitter {
    * Add an audio buffer directly to
    * the looper (insteas of recording one)
    */
-  public addAudioBuffer(audioBuffer: AudioBuffer) {
-    this.stopRecordingImmediate({ providedAudioBuffer: audioBuffer });
+  public addAudioBuffer({ buffer, numMeasures }: AddAudioBufferParams) {
+    this.stopRecordingImmediate({ providedAudioBuffer: buffer, numMeasures });
   }
 
   private async stopRecordingImmediate({
@@ -126,14 +131,14 @@ export default class AudioLooper extends EventEmitter {
 
       // this.clock.addEventListener('measurestart', () => this.onMeasureStart());
 
-      if (numMeasures !== 1) {
-        const REPEAT_TIMES = numMeasures ** -1;
-        newBuffer = repeatBuffer({
-          audioBuffer: newBuffer,
-          audioCtx: this.audioCtx,
-          times: REPEAT_TIMES,
-        });
-      }
+      // if (numMeasures !== 1) {
+      //   const REPEAT_TIMES = numMeasures ** -1;
+      //   newBuffer = repeatBuffer({
+      //     audioBuffer: newBuffer,
+      //     audioCtx: this.audioCtx,
+      //     times: REPEAT_TIMES,
+      //   });
+      // }
     }
 
     // Fill buffer to fit the length of one measure

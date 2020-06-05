@@ -30,7 +30,7 @@ const RecordingBar = (props: WithAppState<Props>) => {
       {() => (
         <BottomBarPresentational
           onFileDropped={(file) => {
-            loopio.addAudioFile(file);
+            loopio.addAudioFile({ file, numMeasures: currentMeasure });
           }}
           bpm={loopioState.timing.bpm}
           measureProgress={Math.round(uiState.measureProgress * 100)}

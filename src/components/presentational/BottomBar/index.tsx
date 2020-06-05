@@ -38,8 +38,8 @@ const BottomBar = ({
   measureProgress,
   onFileDropped,
 }: Props) => {
-  const onMeasureChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    const newMeasure = parseFloat(e.target.value);
+  const onMeasureChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const newMeasure = parseFloat(e.target.value || '1');
     onMeasureChangeProp(newMeasure);
   };
 
@@ -62,16 +62,14 @@ const BottomBar = ({
         {/* <img src={synthIcon} alt="External Audio Modules (synths)" /> */}
       </input>
       {!hideChangeMeasure && (
-        <select
+        <input
           className={measure}
           value={currentMeasure}
+          type="number"
           onChange={onMeasureChange}
-        >
-          <option value={1}>1</option>
-          <option value={1 / 2}>1/2</option>
-          <option value={1 / 4}>1/4</option>
-          <option value={1 / 8}>1/8</option>
-        </select>
+          step={0.125}
+          min={0.125}
+        />
       )}
       <button
         className={classnames(recordBtn, { [isRecordingClass]: isRecording })}
