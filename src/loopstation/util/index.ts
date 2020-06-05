@@ -2,7 +2,7 @@ export function audioDataToBuffer(
   audioCtx: AudioContext,
   data: Blob[],
 ): Promise<AudioBuffer> {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     const blob = new Blob(data, { type: 'audio/ogg; codecs=opus' });
     const fileReader = new FileReader();
     fileReader.addEventListener('loadend', async () => {
@@ -130,4 +130,24 @@ export function repeatBuffer({
     }
   }
   return newBuffer;
+}
+
+export function fileToAudioBuffer(
+  file: File,
+  audioCtx: AudioContext,
+): Promise<AudioBuffer> {
+  return new Promise((resolve) => {
+    const fileReader = new FileReader();
+
+    // Set up file reader on loaded end event
+    fileReader.onloadend = () => {
+      const arrayBuffer = fileReader.result as ArrayBuffer;
+
+      // Convert array buffer into audio buffer
+      audioCtx.decodeAudioData(arrayBuffer, resolve);
+    };
+
+    //Load blob
+    fileReader.readAsArrayBuffer(file);
+  });
 }

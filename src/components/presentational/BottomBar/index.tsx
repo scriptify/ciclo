@@ -20,6 +20,7 @@ interface Props {
   currentMeasure: number;
   onMeasureChange: (m: number) => void;
   onOpenAudioModulesList: () => void;
+  onFileDropped: (file: File) => void;
   hideChangeMeasure: boolean;
   bpm: number;
   measureProgress: number;
@@ -35,17 +36,31 @@ const BottomBar = ({
   isRecording,
   bpm,
   measureProgress,
+  onFileDropped,
 }: Props) => {
   const onMeasureChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const newMeasure = parseFloat(e.target.value);
     onMeasureChangeProp(newMeasure);
   };
 
+  async function onFilesDrop(e: React.ChangeEvent<HTMLInputElement>) {
+    console.log('onFilesDrop', e.target.files);
+    const [file] = e.target.files || [];
+    if (file) {
+      onFileDropped(file);
+    }
+  }
+
   return (
     <div className={barContainer}>
-      <button className={toSpeakersBtn} onClick={onOpenAudioModulesList}>
-        <img src={synthIcon} alt="External Audio Modules (synths)" />
-      </button>
+      <input
+        type="file"
+        className={toSpeakersBtn}
+        onChange={onFilesDrop}
+        accept="audio/*"
+      >
+        {/* <img src={synthIcon} alt="External Audio Modules (synths)" /> */}
+      </input>
       {!hideChangeMeasure && (
         <select
           className={measure}

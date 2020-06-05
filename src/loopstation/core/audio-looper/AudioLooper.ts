@@ -15,6 +15,10 @@ interface StopRecordingParams {
   numMeasures?: number;
 }
 
+interface StopRecordingImmediateParams extends StopRecordingParams {
+  providedAudioBuffer?: AudioBuffer;
+}
+
 export default class AudioLooper extends EventEmitter {
   static MEASURE = 4;
 
@@ -70,7 +74,7 @@ export default class AudioLooper extends EventEmitter {
     }); */
   }
 
-  stopRecording(params: StopRecordingParams) {
+  public stopRecording(params: StopRecordingParams) {
     // Stopping immediately: new phrase will always be adjusted
     return this.stopRecordingImmediate(params);
     /* if (!this.bpm) {
@@ -86,15 +90,28 @@ export default class AudioLooper extends EventEmitter {
     }); */
   }
 
-  private async stopRecordingImmediate({ numMeasures = 1 } = {}) {
+  /**
+   * Add an audio buffer directly to
+   * the looper (insteas of recording one)
+   */
+  public addAudioBuffer(audioBuffer: AudioBuffer) {
+    this.stopRecordingImmediate({ providedAudioBuffer: audioBuffer });
+  }
+
+  private async stopRecordingImmediate({
+    numMeasures = 1,
+    providedAudioBuffer,
+  }: StopRecordingImmediateParams = {}) {
     console.time('rectime');
-    let newBuffer = await this.recorder.stop();
+    let newBuffer = providedAudioBuffer || (await this.recorder.stop());
     fadeAudioBuffer(newBuffer);
 
     const isFirstTrack = !this.measureDuration;
     if (isFirstTrack) {
       // First track
       this.measureDuration = newBuffer.duration * numMeasures ** -1;
+      console.log('this.measureDuration', this.measureDuration);
+      console.log('newBuffer.duration', newBuffer.duration);
       this.bpm = (AudioLooper.MEASURE * 60) / this.measureDuration;
 
       this.clock = new MeasureTimer({
@@ -117,7 +134,6 @@ export default class AudioLooper extends EventEmitter {
           times: REPEAT_TIMES,
         });
       }
-      this.firstTrackStartedAt = this.audioCtx.currentTime;
     }
 
     // Fill buffer to fit the length of one measure
@@ -141,14 +157,28 @@ export default class AudioLooper extends EventEmitter {
     bufferNode.buffer = newBuffer;
     bufferNode.loop = true;
 
-    const startAt = 0;
-    const crazyValueToAddWhoKnowsWhy = 0.19;
-    console.log('val-to-add', crazyValueToAddWhoKnowsWhy);
-    const offset = isFirstTrack
-      ? 0
-      : bufferOrigDuration + crazyValueToAddWhoKnowsWhy;
+    const offset = 0;
+    let startAt = 0;
+
+    // Calculate offset until next 4th,
+    // and delay start by that value
+    if (!isFirstTrack) {
+      const l = this.measureDuration / 4;
+      const b = this.currentMeasureOffset;
+      const a = Math.floor(b / l) * l;
+      const d = b - a;
+      const c = l - d;
+      // const nextMeasureStartsIn =
+      //   this.measureDuration - this.currentMeasureOffset;
+      startAt = c;
+    }
 
     bufferNode.start(this.audioCtx.currentTime + startAt, offset);
+
+    if (isFirstTrack) {
+      this.firstTrackStartedAt = this.audioCtx.currentTime;
+    }
+
     this.audioBuffers.push({
       offset,
       audioBuffer: bufferNode,

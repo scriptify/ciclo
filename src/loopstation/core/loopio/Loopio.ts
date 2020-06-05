@@ -12,6 +12,7 @@ import {
   listExternalAudioModules,
   createExternalAudioModule,
 } from '../external-audio-modules/ExternalAudioModule';
+import { fileToAudioBuffer } from '../../util';
 
 interface SavedRecording {
   groupId: string;
@@ -104,9 +105,9 @@ export default class Loopio {
       },
     );
 
-    const externalAudioModules = await listExternalAudioModules();
-    console.log({ externalAudioModules });
-    this.setExternalAudioModules(externalAudioModules);
+    // const externalAudioModules = await listExternalAudioModules();
+    // console.log({ externalAudioModules });
+    // this.setExternalAudioModules(externalAudioModules);
   }
 
   /**
@@ -147,7 +148,7 @@ export default class Loopio {
 
   private onStateChange() {
     const serializedState = this.serializeState();
-    this.stateChangedCallbacks.forEach(cb => cb(serializedState));
+    this.stateChangedCallbacks.forEach((cb) => cb(serializedState));
   }
 
   private getChnlFromNode(nodeType: LoopIoNodeType, id?: string): Chnl {
@@ -327,7 +328,7 @@ export default class Loopio {
       .filter(([, rec]) => rec.groupId === groupId)
       .map(([id]) => id);
 
-    recordingsInGroup.forEach(recToDelete => {
+    recordingsInGroup.forEach((recToDelete) => {
       this.deleteRecording(recToDelete);
     });
 
@@ -340,6 +341,15 @@ export default class Loopio {
     }
 
     this.onStateChange();
+  }
+
+  /**
+   * User can add an audio file
+   * directly to the loopstation
+   */
+  public async addAudioFile(file: File) {
+    const audioBuffer = await fileToAudioBuffer(file, this.audioCtx);
+    this.audioLooper.addAudioBuffer(audioBuffer);
   }
 
   public getMaster(): Master {
@@ -374,7 +384,7 @@ export default class Loopio {
     this.stateChangedCallbacks.push(cb);
     return () => {
       this.stateChangedCallbacks = this.stateChangedCallbacks.filter(
-        currCb => currCb !== cb,
+        (currCb) => currCb !== cb,
       );
     };
   }

@@ -14,20 +14,24 @@ const RecordingBar = (props: WithAppState<Props>) => {
   const { loopioState, loopio, uiState } = props;
 
   useEffect(() => {
+    console.log('useEffect setup');
     if (!wasSetup) {
       setup(true);
-      window.addEventListener('keydown', e => {
+      window.addEventListener('keydown', (e) => {
         if (e.keyCode === 32) {
           loopio.toggleRecording({ numMeasures: currentMeasure });
         }
       });
     }
-  });
+  }, [wasSetup]);
 
   return (
     <Observer>
       {() => (
         <BottomBarPresentational
+          onFileDropped={(file) => {
+            loopio.addAudioFile(file);
+          }}
           bpm={loopioState.timing.bpm}
           measureProgress={Math.round(uiState.measureProgress * 100)}
           currentMeasure={currentMeasure}

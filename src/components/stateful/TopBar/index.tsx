@@ -5,20 +5,14 @@ import withAppState, { WithAppState } from '../../../app-state';
 
 import TopBarPresentational from '../../presentational/TopBar';
 
-interface Props {
-
-}
+interface Props {}
 
 const TopBar = (props: WithAppState<Props>) => {
   const { loopioState } = props;
 
   return (
     <Observer>
-      {() => (
-        <TopBarPresentational
-          bpm={loopioState.timing.bpm}
-        />
-      )}
+      {() => <TopBarPresentational bpm={loopioState.timing.bpm} />}
     </Observer>
   );
 };
