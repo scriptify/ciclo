@@ -110,9 +110,9 @@ export default class Loopio {
       },
     );
 
-    // const externalAudioModules = await listExternalAudioModules();
-    // console.log({ externalAudioModules });
-    // this.setExternalAudioModules(externalAudioModules);
+    const externalAudioModules = await listExternalAudioModules();
+    console.log({ externalAudioModules });
+    this.setExternalAudioModules(externalAudioModules);
   }
 
   /**

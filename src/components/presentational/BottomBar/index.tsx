@@ -53,14 +53,19 @@ const BottomBar = ({
 
   return (
     <div className={barContainer}>
+      {/* <button className={toSpeakersBtn}>
+        <img
+          src={synthIcon}
+          alt="External Audio Modules (synths)"
+          onClick={onOpenAudioModulesList}
+        />
+      </button> */}
       <input
         type="file"
         className={toSpeakersBtn}
         onChange={onFilesDrop}
         accept="audio/*"
-      >
-        {/* <img src={synthIcon} alt="External Audio Modules (synths)" /> */}
-      </input>
+      />
       {!hideChangeMeasure && (
         <input
           className={measure}

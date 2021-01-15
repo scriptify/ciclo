@@ -31,7 +31,7 @@ export default class AudioBufferRecorder {
     this.streamSource = this.audioCtx.createMediaStreamSource(stream);
 
     const mediaRecorder = new MediaRecorder(this.streamSource.mediaStream);
-    mediaRecorder.ondataavailable = e => {
+    mediaRecorder.ondataavailable = (e) => {
       this.data.push(e.data);
     };
     this.mediaRecorder = mediaRecorder;
@@ -45,7 +45,7 @@ export default class AudioBufferRecorder {
       this.streamSource.connect(this.externalInput);
 
       const mediaRecorder = new MediaRecorder(this.externalInput.stream);
-      mediaRecorder.ondataavailable = e => {
+      mediaRecorder.ondataavailable = (e) => {
         this.data.push(e.data);
       };
       this.mediaRecorder = mediaRecorder;
@@ -55,7 +55,7 @@ export default class AudioBufferRecorder {
   }
 
   stop(): Promise<AudioBuffer> {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       this.mediaRecorder.onstop = async () => {
         console.log('data', this.data[0].size);
         const bufferSource = await audioDataToBuffer(this.audioCtx, this.data);

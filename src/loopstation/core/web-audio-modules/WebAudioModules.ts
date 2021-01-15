@@ -1,30 +1,31 @@
-// function loadWebComponent(href: string, tags: string = '') {
-//   return new Promise(resolve => {
-//     const link = document.createElement('link');
-//     link.setAttribute('rel', 'import');
-//     link.setAttribute('href', href);
-//     link.onload = () => {
-//       console.log('loaded', href);
-//       document.body.insertAdjacentHTML('beforeend', tags);
-//       resolve();
-//     };
-//     document.body.appendChild(link);
-//   });
-// }
-
-// function loadScript(src: string) {
-//   return new Promise(resolve => {
-//     const script = document.createElement('script');
-//     script.setAttribute('src', src);
-//     script.onload = resolve;
-//     document.body.appendChild(script);
-//   });
-// }
+async function createWamHostWebComponent() {
+  const html = await fetch('https://webaudiomodules.org/wam-host.html', {
+    mode: 'cors',
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+    },
+  }).then((res) => res.text());
+  class WamHost extends HTMLElement {
+    constructor() {
+      super();
+      const shadow = this.attachShadow({ mode: 'open' });
+      shadow.innerHTML = html;
+    }
+  }
+  customElements.define('wam-host', WamHost);
+}
 
 export async function listWAMS(): Promise<WamMeta[]> {
-  const wams = await fetch('https://webaudiomodules.org/meta.json').then(r =>
-    r.json(),
-  );
+  return [];
+  await createWamHostWebComponent();
+  // First create was-host webcomponent
+  const wams = await fetch('https://webaudiomodules.org/meta.json', {
+    mode: 'cors',
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+    },
+  }).then((r) => r.json());
+  console.log({ wams });
   return wams;
 }
 

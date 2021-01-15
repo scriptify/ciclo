@@ -8,7 +8,7 @@ import HTML5toTouch from 'react-dnd-multi-backend/lib/HTML5toTouch';
 import BottomBar from '../stateful/BottomBar';
 import Groups from '../stateful/Groups';
 import EffectEditor from '../stateful/EffectEditor';
-// import ExternalAudioModules from '../stateful/ExternalAudioModules';
+import ExternalAudioModules from '../stateful/ExternalAudioModules';
 import { BottomBarContainer, ScrollContainer } from '../presentational/Layout';
 import TopBar from '../stateful/TopBar';
 
@@ -25,7 +25,7 @@ const Ciclo = (p: Props) => {
         <BottomBar />
       </BottomBarContainer>
       <EffectEditor />
-      {/* <ExternalAudioModules /> */}
+      <ExternalAudioModules />
     </>
   );
 };

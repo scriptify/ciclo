@@ -11,6 +11,10 @@ import {
 import AudioLooperVisualization from './AudioLooperVisualization';
 import { SavedAudioBufferData } from './types';
 
+// Delay from Audio Interface -> Browser
+const OS_DELAY = 0.19; // WIN
+// const OS_DELAY = 0;
+
 interface AddAudioBufferParams {
   buffer: AudioBuffer;
   numMeasures?: number;
@@ -111,12 +115,12 @@ export default class AudioLooper extends EventEmitter {
     let newBuffer = providedAudioBuffer || (await this.recorder.stop());
     fadeAudioBuffer(newBuffer);
 
+    fadeAudioBuffer(newBuffer);
+
     const isFirstTrack = !this.measureDuration;
     if (isFirstTrack) {
       // First track
       this.measureDuration = newBuffer.duration * numMeasures ** -1;
-      console.log('this.measureDuration', this.measureDuration);
-      console.log('newBuffer.duration', newBuffer.duration);
       this.bpm = (AudioLooper.MEASURE * 60) / this.measureDuration;
 
       this.clock = new MeasureTimer({
@@ -131,14 +135,15 @@ export default class AudioLooper extends EventEmitter {
 
       // this.clock.addEventListener('measurestart', () => this.onMeasureStart());
 
-      // if (numMeasures !== 1) {
-      //   const REPEAT_TIMES = numMeasures ** -1;
-      //   newBuffer = repeatBuffer({
-      //     audioBuffer: newBuffer,
-      //     audioCtx: this.audioCtx,
-      //     times: REPEAT_TIMES,
-      //   });
-      // }
+      if (numMeasures !== 1) {
+        const REPEAT_TIMES = numMeasures ** -1;
+        newBuffer = repeatBuffer({
+          audioBuffer: newBuffer,
+          audioCtx: this.audioCtx,
+          times: REPEAT_TIMES,
+        });
+      }
+      this.firstTrackStartedAt = this.audioCtx.currentTime;
     }
 
     // Fill buffer to fit the length of one measure
@@ -162,28 +167,11 @@ export default class AudioLooper extends EventEmitter {
     bufferNode.buffer = newBuffer;
     bufferNode.loop = true;
 
-    const offset = 0;
-    let startAt = 0;
-
-    // Calculate offset until next 4th,
-    // and delay start by that value
-    if (!isFirstTrack) {
-      const l = this.measureDuration / 4;
-      const b = this.currentMeasureOffset;
-      const a = Math.floor(b / l) * l;
-      const d = b - a;
-      const c = l - d;
-      // const nextMeasureStartsIn =
-      //   this.measureDuration - this.currentMeasureOffset;
-      startAt = c;
-    }
+    const startAt = 0;
+    let offset = isFirstTrack ? 0 : bufferOrigDuration + OS_DELAY;
+    console.log({ offset });
 
     bufferNode.start(this.audioCtx.currentTime + startAt, offset);
-
-    if (isFirstTrack) {
-      this.firstTrackStartedAt = this.audioCtx.currentTime;
-    }
-
     this.audioBuffers.push({
       offset,
       audioBuffer: bufferNode,

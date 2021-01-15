@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Ciclo from '../Ciclo';
 import { initializeAppState } from '../../app-state';
 
-require('./index.css');
+const { startBtnContainer } = require('./index.css');
 
 interface Props {}
 
@@ -19,14 +19,14 @@ const App = (props: Props) => {
   }
 
   return (
-    <div>
+    <div className={startBtnContainer}>
       <button
         onClick={() => {
           initializeAppState();
           setReady(true);
         }}
       >
-        START!
+        Let's loop!
       </button>
     </div>
   );
